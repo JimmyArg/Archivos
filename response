@@ -1,0 +1,39 @@
+{
+   "afiliado":    {
+      "barrio": "SAN CRISTOBAL SUR",
+      "ciudad": "BOGOTÃ� D.C.",
+      "departamento": "BOGOTA",
+      "deptoCiudad": "11001",
+      "direccion": "CR 5 ESTE 13 67 SUR AP 309",
+      "documento": "1023904201",
+      "email": "CPELAEZD@UCENTRAL.EDU.CO",
+      "envioEmail": "S",
+      "envioSMS": " ",
+      "fechaExp": "20090120",
+      "fechaNac": "19011991",
+      "fechaProxActualiza": "20140225",
+      "fechaUltActualiza": "20131127",
+      "idCelular": "",
+      "idDireccion": "1164412488691976459493976994642",
+      "idEMail": "1164545727686952215618136994646",
+      "idTelefonoFijo": "1164563728011712862069336994649",
+      "lugarExp": "11001",
+      "nombre": "CINDY ESTEFANIA PELAEZ DAZA",
+      "pais": "COL",
+      "segundaCiudad": "",
+      "segundaDireccion": "",
+      "segundaIdDireccion": "",
+      "segundoBarrio": "",
+      "segundoEmail": "",
+      "segundoIdEMail": "",
+      "sex": "F",
+      "telefonoFijo": 3373844,
+      "tipoEnvioFisico": "NNN",
+      "tipoIdentificacion": "CC",
+      "tipoMensajeEmail": "SSS"
+   },
+   "status":    {
+      "statusCode": 200,
+      "statusDesc": "OK"
+   }
+}
