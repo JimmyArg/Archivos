@@ -1,0 +1,3518 @@
+package com.framework.porvenir;
+
+
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.swing.text.StyledEditorKit.BoldAction;
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.Point;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.sikuli.api.DesktopScreenRegion;
+import org.sikuli.api.ImageTarget;
+import org.sikuli.api.robot.desktop.DesktopMouse;
+
+import com.framework.Cls_Cross_Browsing;
+import com.framework.Cls_Log_Ejecucion;
+
+import net.bytebuddy.asm.Advice.Return;
+
+//Variables Sikuli
+
+import static com.framework.Cls_Browser_Sikuli.sr;
+import static com.framework.Cls_Browser_Sikuli.mouse;
+import static com.framework.Cls_Browser_Sikuli.tr;
+
+
+
+public class Actions {
+
+	WebDriver driver;
+	JavascriptExecutor jse;
+	public SimpleDateFormat Dt_Fecha, Dt_FechaCarpeta;
+	public File Obj_Archivo;
+	public File Obj_Carpeta;
+	public String Str_Nombre_Archivo = "";
+	public String Str_Fecha = "";
+	public String Str_Ruta = "";
+	public String Str_Error = "";
+	public String Str_Ruta_ScreenShot = "";
+	public String Str_lane = "_";
+	public String Str_Texto = "";
+	public String Str_folder = "Evidencia de Ejecucion";
+	public String Str_Exitoso = "Casos_Exitosos_";
+	public String Str_Fallido = "Casos_Fallidos_";
+	public String Str_Elemento = "";
+	public String Str_Ruta2 = "";
+	public String className;
+	private int Int_Tiempo_Espera = 15;
+	Cls_Cross_Browsing Obj_Cross_Browsing;
+	Cls_Log_Ejecucion Obj_Log_Ejecucion;
+
+	public Actions(WebDriver driver) {
+		this.driver = driver;
+	}
+
+	//	public Cls_Cross_Browsing CrossBrowsing() {
+	//		this.driver = CrossBrowsing().get_Obj_Driver();
+	//		return Obj_Cross_Browsing;
+	//	}
+
+	public void set_Driver(WebDriver driver)
+	{
+		this.driver = driver;
+	}
+
+	public void maximizarVentana() {
+		driver.manage().window().maximize();
+	}
+
+	public void salirNavegador(boolean status) {
+		if(status=true){
+			ResultSuccess();			
+		}else{
+			ResultFail();	
+		}
+		driver.quit();
+	}
+
+
+	/**
+	 * Carga una nueva pï¿½gina web en la ventana actual del navegador.
+	 *
+	 * @param url
+	 */
+	public boolean abrirUrl(String url) {
+		try{
+			driver.navigate().to(url);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00001: Error abriendo la URL: "+ url +" en el navegador" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+			System.out.println("Informacion: Elemento "+ url + " clickeado por XPATH");
+			return true;
+	}
+	
+	// metodos accion enter desde teclado
+	
+    public boolean tabXpath(String elemento,  String nombre_Elemento) {
+        this.Str_Elemento = elemento;
+        try {
+               
+               ResultSuccess();
+               driver.findElement(By.xpath(elemento)).sendKeys(Keys.TAB);
+               Str_Error="Se realizo tab elemento por xpath =" + nombre_Elemento;
+               
+        } catch (Exception Obj_Excepcion) {
+               
+               // Registra en LOG el error generado al no encontrar el elemento definido en la variable Str_Elemento
+               Str_Error="Error 00001: Error tab elemento "+ elemento +" por xpath =" + nombre_Elemento; // + Obj_Excepcion.getMessage();
+   			   Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+  			   Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+  			   Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+               System.out.println(Str_Error);
+               ResultFail();
+               return false;
+        }
+        
+        		// Mensaje por consola e informe TXT y HTML 
+       		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+       		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+       		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+       		System.out.println("Informacion: Elemento "+ elemento + " tab por xpath =" + nombre_Elemento);
+       		return true;
+  }
+    
+    public boolean enterId(String elemento,  String nombre_Elemento) {
+          this.Str_Elemento = elemento;
+          try {
+                 
+                 ResultSuccess();
+                 driver.findElement(By.id(elemento)).sendKeys(Keys.ENTER);
+                 Str_Error="Se realizo enter elemento por classname =" + nombre_Elemento;
+                 
+          } catch (Exception Obj_Excepcion) {
+                 
+                 // Registra en LOG el error generado al no encontrar el elemento definido en la variable Str_Elemento
+                 Str_Error="Error 00001: Error enter elemento "+ elemento +" por id =" + nombre_Elemento; // + Obj_Excepcion.getMessage();
+     			 Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+    			 Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+    			 Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+                 System.out.println(Str_Error);
+                 ResultFail();
+                 return false;
+          }
+          
+          		// Mensaje por consola e informe TXT y HTML 
+         		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+         		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+         		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+         		System.out.println("Informacion: Elemento "+ elemento + " enter por id =" + nombre_Elemento);
+         		return true;
+    }
+    
+    
+    public boolean enterName(String elemento,  String nombre_Elemento) {
+        this.Str_Elemento = elemento;
+        try {
+               
+            ResultSuccess();
+            driver.findElement(By.name(elemento)).sendKeys(Keys.ENTER);
+            Str_Error="Se realizo enter elemento por name =" + nombre_Elemento;
+               
+        } catch (Exception Obj_Excepcion) {
+               
+               // Registra en LOG el error generado al no encontrar el elemento definido en la variable Str_Elemento
+            Str_Error="Error 00002: Error enter elemento "+ elemento +" por name =" + nombre_Elemento; // + Obj_Excepcion.getMessage();
+   			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+  			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+  			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+            System.out.println(Str_Error);
+            ResultFail();
+            return false;
+        }
+        
+        	Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+        	Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+        	Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+        	System.out.println("Informacion: Elemento "+ elemento + " enter por name= " + nombre_Elemento);
+        	return true;
+  }
+    
+    public boolean enterClass(String elemento,  String nombre_Elemento) {
+        this.Str_Elemento = elemento;
+        try {
+               
+               ResultSuccess();
+               driver.findElement(By.className(elemento)).sendKeys(Keys.ENTER);
+               Str_Error="Se realizo enter elemento por className =" + nombre_Elemento;
+               
+        } catch (Exception Obj_Excepcion) {
+               
+               // Registra en LOG el error generado al no encontrar el elemento definido en la variable Str_Elemento
+               Str_Error="Error 00003: Error enter elemento "+ elemento +" por className =" + nombre_Elemento; // + Obj_Excepcion.getMessage();
+   			   Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+  			   Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+  			   Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+               System.out.println(Str_Error);
+               ResultFail();
+               return false;
+        }
+        
+        		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+        		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+        		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+        		System.out.println("Informacion: Elemento "+ elemento + " enter por className=" + nombre_Elemento);
+        		return true;
+  }
+    
+    public boolean enterLintText(String elemento,  String nombre_Elemento) {
+        this.Str_Elemento = elemento;
+        try {
+               
+               ResultSuccess();
+               driver.findElement(By.linkText(elemento)).sendKeys(Keys.ENTER);
+               Str_Error="Se realizo enter elemento por linkText =" + nombre_Elemento;
+               
+        } catch (Exception Obj_Excepcion) {
+               
+               // Registra en LOG el error generado al no encontrar el elemento definido en la variable Str_Elemento
+               Str_Error="Error 00004: Error enter elemento "+ elemento +" por linkText =" + nombre_Elemento; // + Obj_Excepcion.getMessage();
+   			   Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+  			   Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+  			   Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+               System.out.println(Str_Error);
+               ResultFail();
+               return false;
+        }
+        
+        		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+        		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+        		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+        		System.out.println("Informacion: Elemento "+ elemento + " enter por linkText=" +nombre_Elemento);
+        		return true;
+  }
+
+    public boolean enterXpath(String elemento,  String nombre_Elemento) {
+        this.Str_Elemento = elemento;
+        try {
+               
+               ResultSuccess();
+               driver.findElement(By.xpath(elemento)).sendKeys(Keys.ENTER);
+               Str_Error="Se realizo enter elemento por xpath =" + nombre_Elemento;
+               
+        } catch (Exception Obj_Excepcion) {
+               
+               // Registra en LOG el error generado al no encontrar el elemento definido en la variable Str_Elemento
+               Str_Error="Error 00005: Error enter elemento "+ elemento +" por xpath =" + nombre_Elemento; // + Obj_Excepcion.getMessage();
+   			   Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+  			   Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+  			   Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+               System.out.println(Str_Error);
+               ResultFail();
+               return false;
+        }
+        
+        		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+        		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+        		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+        		System.out.println("Informacion: Elemento "+ elemento + " enter por xpath=" +nombre_Elemento);
+        		return true;
+  }
+    
+    public boolean enterPartialLinkText(String elemento,  String nombre_Elemento) {
+        this.Str_Elemento = elemento;
+        try {
+               
+               ResultSuccess();
+               driver.findElement(By.partialLinkText(elemento)).sendKeys(Keys.ENTER);
+               Str_Error="Se realizo enter elemento por partialLinkText =" + nombre_Elemento;
+               
+        } catch (Exception Obj_Excepcion) {
+               
+               // Registra en LOG el error generado al no encontrar el elemento definido en la variable Str_Elemento
+               Str_Error="Error 00006: Error enter elemento "+ elemento +" por partialLinkText =" + nombre_Elemento; // + Obj_Excepcion.getMessage();
+   			   Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+  			   Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+  			   Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+               System.out.println(Str_Error);
+               ResultFail();
+               return false;
+        }
+        
+        		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+        		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+        		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+        		System.out.println("Informacion: Elemento "+ elemento + " enter por partialLinkText="+ nombre_Elemento);
+        		return true;
+  }
+
+    public boolean enterCssSelector(String elemento,  String nombre_Elemento) {
+        this.Str_Elemento = elemento;
+        try {
+               
+               ResultSuccess();
+               driver.findElement(By.cssSelector(elemento)).sendKeys(Keys.ENTER);
+               Str_Error="Se realizo enter elemento por cssSelector =" + nombre_Elemento;
+               
+        } catch (Exception Obj_Excepcion) {
+               
+               // Registra en LOG el error generado al no encontrar el elemento definido en la variable Str_Elemento
+               Str_Error="Error 00007: Error enter elemento "+ elemento +" por cssSelector =" + nombre_Elemento; // + Obj_Excepcion.getMessage();
+   			   Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+  			   Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+  			   Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+               System.out.println(Str_Error);
+               ResultFail();
+               return false;
+        }
+        
+        		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+        		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+        		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+        		System.out.println("Informacion: Elemento "+ elemento + " enter por cssSelector=" + nombre_Elemento);
+        		return true;
+  }
+    
+    public boolean enterTagName(String elemento,  String nombre_Elemento) {
+        this.Str_Elemento = elemento;
+        try {
+               
+               ResultSuccess();
+               driver.findElement(By.tagName(elemento)).sendKeys(Keys.ENTER);
+               Str_Error="Se realizo enter elemento por tagName =" + nombre_Elemento;
+               
+        } catch (Exception Obj_Excepcion) {
+               
+               // Registra en LOG el error generado al no encontrar el elemento definido en la variable Str_Elemento
+               Str_Error="Error 00008: Error enter elemento "+ elemento +" por tagName =" + nombre_Elemento; // + Obj_Excepcion.getMessage();
+   			   Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+  			   Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+  			   Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+               System.out.println(Str_Error);
+               ResultFail();
+               return false;
+        }
+        
+        		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+        		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+        		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+        		System.out.println("Informacion: Elemento "+ elemento + " enter por tagName=" +nombre_Elemento);
+        		return true;
+  }
+     
+
+	//Metodos para realizar click
+	public boolean clickByXpath(String elemento, String nombreElemento) {
+		this.Str_Elemento = elemento;
+		try{
+			ResultSuccess();
+			driver.findElement(By.xpath(elemento)).click();
+			Str_Error="Clickeado elemento por xpath ="+ nombreElemento;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00009: Error clickeando elemento "+ elemento +" por xpath = "+ nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println("Informacion: Elemento "+ elemento + " clickeado por xpath=" + nombreElemento);
+			return true;
+	}
+
+	public boolean clickByCSS(String elemento, String nombre_Elemento) {
+		this.Str_Elemento = elemento;
+		try{
+			ResultSuccess();
+			driver.findElement(By.cssSelector(elemento)).click();
+			Str_Error="Clickeado elemento por cssSelector ="+ nombre_Elemento;
+			
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00010: Error clickeando elemento "+ elemento +" por cssSelector =  " + nombre_Elemento; //+ Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento		
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println("Informacion: Elemento "+ elemento + " clickeado por cssSelector=" +nombre_Elemento);
+			return true;
+	}
+
+	public boolean clickByName(String elemento, String nombreElemento) {
+		this.Str_Elemento = elemento;
+		try{
+			ResultSuccess();
+			driver.findElement(By.name(elemento)).click();
+			Str_Error="Clickeado elemento por name ="+ nombreElemento;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 000011: Error clickeando elemento "+ elemento +" por name =" + nombreElemento; // Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println("Informacion: Elemento "+ elemento + " clickeado por name= "+ nombreElemento);
+			return true;
+	}
+
+	
+	public boolean clickByID(String elemento, String nombreElemento) {
+		this.Str_Elemento = elemento;
+		try{
+			ResultSuccess();
+			driver.findElement(By.id(elemento)).click();
+			Str_Error="Clickeado elemento por id = "+nombreElemento;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 000012: Error clickeando elemento "+ elemento +" por id"+nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();			
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println("Informacion: Elemento "+ elemento + " clickeado por id =" +nombreElemento);
+			return true;
+	}
+
+	public boolean clickByLink(String elemento, String nombreElemento) {
+		this.Str_Elemento = elemento;
+		try{
+			ResultSuccess();
+			driver.findElement(By.linkText(elemento)).click();
+			Str_Error="Clickeado elemento por linkText = "+nombreElemento;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00013: Error clickeando elemento "+ elemento +" por linkText =" + nombreElemento;// Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println("Informacion: Elemento "+ elemento + " clickeado por linkText =" +nombreElemento);
+			return true;
+	}
+	
+	public boolean clickByPartialLink(String elemento, String nombreElemento) {
+		this.Str_Elemento = elemento;
+		try{
+			ResultSuccess();
+			driver.findElement(By.partialLinkText(elemento)).click();
+			Str_Error="Clickeado elemento por PartialLink = "+nombreElemento;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00014: Error clickeando elemento "+ elemento +" por PartialLink =" + nombreElemento;// Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println("Informacion: Elemento "+ elemento + " clickeado por PartialLink=" + nombreElemento);
+			return true;
+	}
+
+	
+	public boolean clickByTagName(String elemento, String nombreElemento) {
+		this.Str_Elemento = elemento;
+		try{
+			ResultSuccess();
+			driver.findElement(By.tagName(elemento)).click();
+			Str_Error="Clickeado elemento por tagName = "+nombreElemento;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00015: Error clickeando elemento "+ elemento +" por tagName =" + nombreElemento;// Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por tagName=" + nombreElemento);
+		return true;
+	}
+
+
+	public boolean clickByClassName(String elemento, String nombreElemento) {
+		this.Str_Elemento = elemento;
+		try{
+			ResultSuccess();
+			driver.findElement(By.className(elemento)).click();
+			Str_Error="Clickeado elemento por className = "+nombreElemento;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00016: Error clickeando elemento "+ elemento +" por className =" + nombreElemento;// Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println("Informacion: Elemento "+ elemento + " clickeado por className=" + nombreElemento);
+			return true;
+	}
+	
+
+	//ESCRIBIR 
+	public boolean TypeByXpath(String elemento, String text, String nombre_Elemento) {
+		this.Str_Elemento = elemento;
+		try{
+			ResultSuccess();
+			driver.findElement(By.xpath(elemento)).sendKeys(text);
+			Str_Error="Escribiendo elemento por xpath =" + nombre_Elemento;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00017: Error escribiendo en el elemento "+ elemento +" por xpath" + nombre_Elemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola y log indicando que se ha escrito en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println("Informacion: Elemento "+ elemento + " escribiendo por xpath=" +nombre_Elemento);
+			return true;
+	}
+
+	
+	public boolean TypeByCss(String elemento, String text, String nombre_Elemento) {
+		this.Str_Elemento = elemento;
+		try{
+			ResultSuccess();
+			driver.findElement(By.cssSelector(elemento)).sendKeys(text);
+			Str_Error="Escribiendo elemento por cssSelector =" + nombre_Elemento;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00018: Error escribiendo en el elemento "+ elemento +" por cssSelector" + nombre_Elemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola y log indicando que se ha escrito en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println("Informacion: Elemento "+ elemento + " escribiendo por cssSelector=" + nombre_Elemento);
+			return true;
+	}
+	
+	public boolean TypeByName(String elemento, String text, String nombre_Elemento) {
+		this.Str_Elemento = elemento;
+		try{
+			ResultSuccess();
+			driver.findElement(By.name(elemento)).sendKeys(text);
+			Str_Error="Escribiendo elemento por name =" + nombre_Elemento;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00019: Error escribiendo en el elemento "+ elemento +" por name" + nombre_Elemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola y log indicando que se ha escrito en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println("Informacion: Elemento "+ elemento + " escribiendo por name=" + nombre_Elemento);
+			return true;
+	}
+
+	public boolean TypeByID(String elemento, String text, String nombreElemento)  {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.id(elemento)).sendKeys(text);
+			Str_Error="Escribiendo elemento por ID ="+nombreElemento ;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00020: Error escribiendo en el elemento "+ elemento +" por ID"+ nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println("Informacion: Elemento "+ elemento + " Escribiendo por id=" + nombreElemento);
+			return true;
+	}
+	
+	public boolean TypeByLink(String elemento, String text, String nombreElemento)  {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.linkText(elemento)).sendKeys(text);
+			Str_Error="Escribiendo elemento por linkText ="+nombreElemento ;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00021: Error escribiendo en el elemento "+ elemento +" por linkText"+ nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+		System.out.println("Informacion: Elemento "+ elemento + " Escribiendo por linkText=" + nombreElemento);
+		return true;
+	}
+
+	public boolean TypeByPartialLink(String elemento, String text, String nombreElemento)  {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.partialLinkText(elemento)).sendKeys(text);
+			Str_Error="Escribiendo elemento por partialLinkText ="+nombreElemento ;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00022: Error escribiendo en el elemento "+ elemento +" por partialLinkText"+ nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+		System.out.println("Informacion: Elemento "+ elemento + " Escribiendo por partialLinkText=" + nombreElemento);
+		return true;
+	}
+	
+
+	public boolean TypeByTagName(String elemento, String text, String nombreElemento){
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.tagName(elemento)).sendKeys(text);
+			Str_Error="Escribiendo elemento por tagName ="+nombreElemento ;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00023: Error escribiendo en el elemento "+ elemento +" por tagName"+ nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+		System.out.println("Informacion: Elemento "+ elemento + " Escribiendo por tagName=" + nombreElemento);
+		return true;
+	}
+	
+	public boolean TypeClassName(String elemento, String text, String nombreElemento){
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.className(elemento)).sendKeys(text);
+			Str_Error="Escribiendo elemento por className ="+nombreElemento ;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00024: Error escribiendo en el elemento "+ elemento +" por className"+ nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+		System.out.println("Informacion: Elemento "+ elemento + " Escribiendo por className=" + nombreElemento);
+		return true;
+	}
+
+	
+	public boolean TypeByXpathWithCapture(String elemento, String text, String nombreElemento){
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.className(elemento)).sendKeys(text);
+			Str_Error="Escribiendo elemento por className ="+nombreElemento ;
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00025: Error escribiendo en el elemento "+ elemento +" por className"+ nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,elemento);
+		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,elemento);
+		System.out.println("Informacion: Elemento "+ elemento + " Escribiendo por className=" + nombreElemento);
+		return true;
+	}
+	
+	public boolean TypeByXpathWithCapture(String elemento, String text) {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.xpath(elemento)).sendKeys(text);
+			ResultSuccess();	
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00026: Error escribiendo en el elemento "+ elemento +" por xpath, " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por xpath");
+		return true;
+	}
+	public boolean TypeByCSSWithCapture(String elemento, String text) {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.cssSelector(elemento)).sendKeys(text); 
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00027: Error escribiendo en el elemento "+ elemento +" por CSS  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por CSS");
+		return true;
+	}
+
+	public boolean TypeByNameWithCapture(String elemento, String text)  {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.name(elemento)).sendKeys(text);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00028: Error escribiendo en el elemento "+ elemento +" por NAME  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por NAME");
+		return true;
+	}
+
+	public boolean TypeByIDWithCapture(String elemento, String text)  {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.id(elemento)).sendKeys(text);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00029: Error escribiendo en el elemento "+ elemento +" por ID  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por ID");
+		return true;
+	}
+
+	public boolean TypeByLinkWithCapture(String elemento, String text)  {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.linkText(elemento)).sendKeys(text);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00030: Error escribiendo en el elemento "+ elemento +" por LINK  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por LINK");
+		return true;
+	}
+
+	public boolean TypeByPartialLinkWithCapture(String elemento, String text)  {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.partialLinkText(elemento)).sendKeys(text);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00031: Error escribiendo en el elemento "+ elemento +" por PartialLink  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por PartialLink");
+		return true;
+	}
+
+	public boolean TypeByTagNameWithCapture(String elemento, String text)  {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.tagName(elemento)).sendKeys(text);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00032: Error escribiendo en el elemento "+ elemento +" por TagName  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por TagName");
+		return true;
+	}
+
+	public boolean TypeClassNameWithCapture(String elemento, String text)  {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.className(elemento)).sendKeys(text);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00033: Error escribiendo en el elemento "+ elemento +" por ClassName  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por ClassName");
+		return true;
+	}
+
+	//ESPERAR POR ...
+
+	public void esperarSegundos(int segundos)
+	{
+		synchronized(driver){
+			try {
+				driver.wait(segundos * 1000);
+				Str_Error="Esperando = " +  segundos + " segundos";
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				Str_Error="Error 00034: Error espereando";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error);
+				Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error);
+				System.out.println(Str_Error);
+				e.printStackTrace();
+			}
+			
+				//Mensaje por consola indicando que se ha hecho clic en el elemento
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error);
+				Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error);
+				System.out.println("Esperando = " +  segundos + " segundos");
+		}
+	}
+
+	public String EsperarPorElementoNoSeaVisible(WebDriver driver, String XPath) {
+		if ((driver == null) || (XPath == null) || XPath.isEmpty()) {
+
+			return "Mal uso de la sentencia WaitforElementNotVisible()";
+		}
+		try {
+			(new WebDriverWait(driver, 300)).until(ExpectedConditions.invisibilityOfElementLocated(By
+					.xpath(XPath)));
+			return null;
+		} catch (TimeoutException e) {
+			return "Error al esperar por el elemento.";
+		}
+	}
+	
+	public String EsperarPorElementoNoSeaVisibleTagName(WebDriver driver, String TagName) {
+		if ((driver == null) || (TagName == null) || TagName.isEmpty()) {
+
+			return "Mal uso de la sentencia WaitforElementNotVisible()";
+		}
+		try {
+			(new WebDriverWait(driver, 300)).until(ExpectedConditions.invisibilityOfElementLocated(By
+					.tagName(TagName)));
+			return null;
+		} catch (TimeoutException e) {
+			return "Error al esperar por el elemento.";
+		}
+	}
+
+	public String EsperarPorElementoSeaClickeableXpath(WebDriver driver, String XPath) {
+		if ((driver == null) || (XPath == null) || XPath.isEmpty()) {
+
+			return "Mal uso de la sentencia WaitforElementToBeClickeable";
+		}
+		try {
+			(new WebDriverWait(driver, 300)).until(ExpectedConditions.elementToBeClickable(By.xpath(XPath)));
+
+			return null;
+		} catch (TimeoutException e) {
+			return "Error al esperar por el elemento a clickear";
+		}
+	}
+
+	public String EsperarPorElementoSeaClickeableTagName(WebDriver driver, String TagName) {
+		if ((driver == null) || (TagName == null) || TagName.isEmpty()) {
+
+			return "Mal uso de la sentencia WaitforElementToBeClickeable";
+		}
+		try {
+			(new WebDriverWait(driver, 300)).until(ExpectedConditions.elementToBeClickable(By.tagName(TagName)));
+
+			return null;
+		} catch (TimeoutException e) {
+			return "Error al esperar por el elemento a clickear";
+		}
+	}
+
+
+	public String EsperarPorElementoVisible(WebDriver driver, String XPath) {
+		if ((driver == null) || (XPath == null) || XPath.isEmpty()) {
+
+			return "Mal uso de la sentencia WaitforElementVisible()";
+		}
+		try {
+			(new WebDriverWait(driver, 300)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(XPath))); 
+			return null;
+		} catch (TimeoutException e) {
+			return "Error al esperar por el elemento.";
+		}
+	}
+	public String EsperarPorElementoVisibleCorto(WebDriver driver, String XPath) {
+		if ((driver == null) || (XPath == null) || XPath.isEmpty()) {
+			return "Mal uso de la sentencia WaitforElementVisible()";
+		}
+		try {
+			(new WebDriverWait(driver, 15)).until(ExpectedConditions.visibilityOfElementLocated(By.xpath(XPath))); 
+			return null;
+		} catch (TimeoutException e) {
+			return "Error al esperar por el elemento.";
+		}
+	}
+
+	public String EsperarPorElementoVisibleTagName(WebDriver driver, String TagName) {
+		if ((driver == null) || (TagName == null) || TagName.isEmpty()) {
+
+			return "Mal uso de la sentencia WaitforElementVisible()";
+		}
+		try {
+			(new WebDriverWait(driver, 300)).until(ExpectedConditions.visibilityOfElementLocated(By.tagName(TagName))); 
+			return null;
+		} catch (TimeoutException e) {
+			return "Error al esperar por el elemento.";
+		}
+	}
+
+	//Javascript
+	public boolean ForzarClickJavascript(WebDriver driver, String Xpath, String nombreElemento){
+		
+		try {
+		WebElement element = driver.findElement(By.xpath(Xpath));
+		JavascriptExecutor executor = (JavascriptExecutor)driver;
+		executor.executeScript("arguments[0].click();", element);
+		Str_Error="Click Javascript elemento por xpath =" + nombreElemento;
+		ResultSuccess();
+		
+		}catch(Exception Obj_Excepcion) {
+			
+		ResultFail();
+		Str_Error = "Error 00035: Error Elemento: xpath="+Xpath+" click Javascript";// + Obj_Excepcion.getMessage();
+		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Xpath);
+		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,Xpath);
+		System.out.println(Str_Error);
+		return false;
+			
+		}
+		
+		//Mensaje por consola indicando que se ha escrito en el elemento
+		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Xpath);
+		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,Xpath);
+		System.out.println("Informacion: Elemento "+ Xpath + " clicleado por xpath=" + nombreElemento);
+		return true;
+	}
+	
+	
+	public boolean ForzarTypeJavascriptXpath(WebDriver driver,String xpath, String value, String nombreElemento) {
+		
+	try {
+		
+		WebElement element = driver.findElement(By.xpath(xpath));
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("arguments[0].value='"+value+"'" , element);
+		Str_Error="Escribiendo Javascript elemento por xpath =" + nombreElemento;
+		ResultSuccess();
+		
+	}catch(Exception Obj_Excepcion)
+	{
+		ResultFail();
+		Str_Error = "Error 00036: Error Elemento: xpath="+xpath+" escribiendo Javascript "+ nombreElemento;// + Obj_Excepcion.getMessage();
+		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,xpath);
+		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,xpath);
+		System.out.println(Str_Error);
+		return false;
+		
+	}
+		//Mensaje por consola indicando que se ha escrito en el elemento
+		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,xpath);
+		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,xpath);
+		System.out.println("Informacion: Elemento "+ xpath + " ecribiendo por xpath=" + nombreElemento);
+		return true;
+	
+	}
+	
+	public boolean ForzarTypeJavascriptId(WebDriver driver,String xpath, String value, String nombreElemento) {
+		
+	try {
+		
+		WebElement element = driver.findElement(By.id(xpath));
+		JavascriptExecutor js = (JavascriptExecutor) driver;
+		js.executeScript("arguments[0].value='"+value+"'" , element);
+		Str_Error="Escribiendo Javascript elemento por xpath =" + nombreElemento;
+		ResultSuccess();
+		
+	}catch(Exception Obj_Excepcion)
+	{
+		ResultFail();
+		Str_Error = "Error 00036: Error Elemento: Id= "+xpath+" escribiendo Javascript "+ nombreElemento;// + Obj_Excepcion.getMessage();
+		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,xpath);
+		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,xpath);
+		System.out.println(Str_Error);
+		return false;
+		
+	}
+		//Mensaje por consola indicando que se ha escrito en el elemento
+		Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+		Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,xpath);
+		Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,xpath);
+		System.out.println("Informacion: Elemento "+ xpath + " ecribiendo por Id=" + nombreElemento);
+		return true;
+	}
+
+
+	//Capturas de pantalla
+	public static void GenerarCaptura(WebDriver webdriver,String fileWithPath) throws Exception{
+
+		TakesScreenshot scrShot =((TakesScreenshot)webdriver);
+
+		File SrcFile=scrShot.getScreenshotAs(OutputType.FILE);
+
+		File DestFile=new File(fileWithPath);
+
+		FileUtils.copyFile(SrcFile, DestFile);
+
+	}
+
+	public boolean ResultSuccess(){	
+		try{		
+			Dt_Fecha = new SimpleDateFormat("dd-M-yyyy");
+			Dt_FechaCarpeta = new SimpleDateFormat("h:mm a");
+			Str_Ruta = Dt_Fecha.format(new Date()) +"\\";
+			Str_Ruta = Str_Ruta.replaceAll("-", "_");
+			Str_Ruta2 = Str_Exitoso+className;
+			Obj_Carpeta = new File(Str_folder, Str_Ruta+Str_Ruta2);
+			if (!Obj_Carpeta.isDirectory())
+			{
+				Obj_Carpeta.mkdirs();
+			}
+			File srcFile=((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+			Dt_Fecha = new SimpleDateFormat("dd-M-yyyy hh:mm:ss mmm");	
+			Str_Nombre_Archivo = className + Str_lane + Dt_Fecha.format(new Date());
+			Str_Nombre_Archivo = Str_Nombre_Archivo.replaceAll(":", "_");
+			Str_Nombre_Archivo = Str_Nombre_Archivo.replaceAll("-", "_");
+			FileUtils.copyFile(srcFile, new File (Obj_Carpeta, Str_Nombre_Archivo + ".jpg"));
+			Str_Nombre_Archivo = "";
+		}
+		catch(IOException e){
+			e.printStackTrace();
+			CloseCapture();
+			return false;
+		}
+		return false;
+	}
+
+	public boolean ResultFail(){
+
+		try{		
+			Dt_Fecha = new SimpleDateFormat("dd-M-yyyy");
+			Str_Ruta = Dt_Fecha.format(new Date()) +"\\";
+			Str_Ruta = Str_Ruta.replaceAll("-", "_");
+			Str_Ruta2 = Str_Fallido+className;
+			Obj_Carpeta = new File(Str_folder, Str_Ruta+Str_Ruta2);
+			if (!Obj_Carpeta.isDirectory())
+			{
+				Obj_Carpeta.mkdirs();
+			}
+			File srcFile=((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+			Dt_Fecha = new SimpleDateFormat("dd-M-yyyy hh:mm:ss mmm");	
+			Str_Nombre_Archivo = className + Str_lane + Dt_Fecha.format(new Date());
+			Str_Nombre_Archivo = Str_Nombre_Archivo.replaceAll(":", "_");
+			Str_Nombre_Archivo = Str_Nombre_Archivo.replaceAll("-", "_");
+			FileUtils.copyFile(srcFile, new File (Obj_Carpeta, Str_Nombre_Archivo + ".jpg"));
+			Str_Nombre_Archivo = "";
+		}
+		catch(IOException e){
+			e.printStackTrace();
+			CloseCapture();
+			return false;
+		}
+		return false;
+	}
+
+	public void TakeScreenshot(WebDriver webdriver) throws Exception{
+		try{
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			ResultFail();
+			Str_Error = "Error 00068: No se pudo tomar la captura de pantalla" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+		}
+	}
+
+	//Salir driver
+	private void CloseCapture()
+	{
+		try
+		{
+			driver.close();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			Str_Error = "Error (?????): " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+		}
+	}
+
+	//SCROLLING
+	public boolean ScrollingWebsiteByXpath(WebDriver driver, String elemento)  {
+		this.Str_Elemento = elemento;
+		try{
+			esperarSegundos(1);
+			WebElement URL_demo = driver.findElement(By.xpath(elemento));
+			((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", URL_demo);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00026: El elemento: "+ elemento +"por XPATH no se pudo identificar para hacer scroll" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Scroll de: "+ elemento + " realizado correctamente por XPATH");
+		return true;
+	}
+	public boolean ScrollingWebsiteByClassName(WebDriver driver, String elemento)  {
+		this.Str_Elemento = elemento;
+		try{
+			esperarSegundos(1);
+			WebElement URL_demo = driver.findElement(By.className(elemento));
+			((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", URL_demo);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00027: El elemento: "+ elemento +"por CLASSNAME no se pudo identificar para hacer scroll" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Scroll de: "+ elemento + " realizado correctamente por CLASSNAME");
+		return true;
+	}
+	public boolean ScrollingWebsiteByCSS(WebDriver driver, String elemento)  {
+		this.Str_Elemento = elemento;
+		try{
+			esperarSegundos(1);
+			WebElement URL_demo = driver.findElement(By.cssSelector(elemento));
+			((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", URL_demo);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00028: El elemento: "+ elemento +"por CSS no se pudo identificar para hacer scroll" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Scroll de: "+ elemento + " realizado correctamente por CSS");
+		return true;
+	}
+	public boolean ScrollingWebsiteByID(WebDriver driver, String elemento)  {
+		this.Str_Elemento = elemento;
+		try{
+			esperarSegundos(1);
+			WebElement URL_demo = driver.findElement(By.id(elemento));
+			((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", URL_demo);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00029: El elemento: "+ elemento +"por ID no se pudo identificar para hacer scroll" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Scroll de: "+ elemento + " realizado correctamente por ID");
+		return true;
+	}
+	public boolean ScrollingWebsiteByLinkText(WebDriver driver, String elemento)  {
+		this.Str_Elemento = elemento;
+		try{
+			esperarSegundos(1);
+			WebElement URL_demo = driver.findElement(By.linkText(elemento));
+			((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", URL_demo);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00030: El elemento: "+ elemento +"por LinkText no se pudo identificar para hacer scroll" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Scroll de: "+ elemento + " realizado correctamente por LinkText");
+		return true;
+	}
+	public boolean ScrollingWebsiteByName(WebDriver driver, String elemento)  {
+		this.Str_Elemento = elemento;
+		try{
+			esperarSegundos(1);
+			WebElement URL_demo = driver.findElement(By.name(elemento));
+			((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", URL_demo);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00031: El elemento: "+ elemento +"por Name no se pudo identificar para hacer scroll" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Scroll de: "+ elemento + " realizado correctamente por Name");
+		return true;
+	}
+	public boolean ScrollingWebsiteByPartialLinkText(WebDriver driver, String elemento)  {
+		this.Str_Elemento = elemento;
+		try{
+			esperarSegundos(1);
+			WebElement URL_demo = driver.findElement(By.partialLinkText(elemento));
+			((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", URL_demo);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00032: El elemento: "+ elemento +"por PartialLinkText no se pudo identificar para hacer scroll" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Scroll de: "+ elemento + " realizado correctamente por PartialLinkText");
+		return true;
+	}
+	public boolean ScrollingWebsiteByTagName(WebDriver driver, String elemento)  {
+		this.Str_Elemento = elemento;
+		try{
+			esperarSegundos(1);
+			WebElement URL_demo = driver.findElement(By.tagName(elemento));
+			((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", URL_demo);
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00033: El elemento: "+ elemento +"por TagName no se pudo identificar para hacer scroll" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Scroll de: "+ elemento + " realizado correctamente por TagName");
+		return true;
+	}
+
+	//DROPDOWN
+	
+	public boolean SelectDropDownXpath(String xpathElemento, String nombreElemento)  {
+
+		try{
+		    WebElement dropdown = driver.findElement(By.xpath(xpathElemento));
+		    dropdown.findElement(By.xpath("//option[. = '"+nombreElemento+"']")).click();
+			ResultSuccess();
+
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00037: No se pudo seleccionar el elemento xpath del dropdown"+ nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,xpathElemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,xpathElemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha seleccionado el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,xpathElemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,xpathElemento);
+			System.out.println("Informacion: Elemento xpath ="+ xpathElemento+ "seleccionado correctamente=" + nombreElemento);
+			return true;
+	}
+	
+	public boolean SelectDropDownVALUEByXpath(WebDriver driver, String xpathElemento, String SeleccionarElementoDropdown, String nombreElemento)  {
+
+		try{
+			Select selection = new Select(driver.findElement(By.xpath(xpathElemento)));
+			selection.selectByValue(SeleccionarElementoDropdown);
+			Str_Error="Seleccionando elemento por xpath ="+ nombreElemento;
+			ResultSuccess();
+
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00037: No se pudo seleccionar el elemento xpath del dropdown"+ nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,xpathElemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,xpathElemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha seleccionado el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,xpathElemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,xpathElemento);
+			System.out.println("Informacion: Elemento xpath ="+ xpathElemento+ "seleccionado correctamente=" + nombreElemento);
+			return true;
+	}
+
+	public boolean SelectDropDownINDEXByXpath(WebDriver driver, String xpathElemento, int SeleccionarElementoDropdown, String nombreElemento)  {
+
+		try{
+			Select selection = new Select(driver.findElement(By.xpath(xpathElemento)));
+			selection.selectByIndex(SeleccionarElementoDropdown);
+			Str_Error="Seleccionando elemento por xpath ="+ nombreElemento;
+			ResultSuccess();
+
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00038: No se pudo seleccionar el elemento del dropdown" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,xpathElemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,xpathElemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha seleccionado el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,xpathElemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,xpathElemento);
+			System.out.println("Informacion: Elemento xpath =" +xpathElemento+"seleccionado correctamente=" + nombreElemento);
+			return true;
+	}
+
+	public boolean SelectDropDownTEXTByXpath(WebDriver driver, String xpathElemento, String SeleccionarElementoDropdown, String nombreElemento )  {
+
+		try{
+			Select selection = new Select(driver.findElement(By.xpath(xpathElemento)));
+			selection.selectByVisibleText(SeleccionarElementoDropdown);
+			Str_Error="Seleccionando elemento por xpath ="+ nombreElemento;
+			ResultSuccess();
+
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00039: No se pudo seleccionar el elemento del dropdown"+ nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,xpathElemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,xpathElemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,xpathElemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,xpathElemento);
+			System.out.println("Informacion: Elemento xpath ="+xpathElemento+"seleccionado correctamente =" +nombreElemento);
+			return true;
+	}
+
+	public boolean SelectDropDownVALUEByID(WebDriver driver, String idElemento, String SeleccionarElementoDropdown, String nombreElemento)  {
+
+		try{
+			Select selection = new Select(driver.findElement(By.id(idElemento)));
+			selection.selectByValue(SeleccionarElementoDropdown);
+			Str_Error="Seleccionando elemento por id ="+ nombreElemento;
+			ResultSuccess();
+
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00040: No se pudo seleccionar el elemento id del dropdown" + nombreElemento; //+ Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, idElemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, idElemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,idElemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error,idElemento);
+			System.out.println("Informacion: Elemento id= "+idElemento+" seleccionado correctamente =" + nombreElemento);
+			return true;
+	}
+
+	public boolean SelectDropDownINDEXByID(WebDriver driver, String idElemento, int SeleccionarElementoDropdown, String nombreElemento)  {
+
+		try{
+			Select selection = new Select(driver.findElement(By.id(idElemento)));
+			selection.selectByIndex(SeleccionarElementoDropdown);
+			Str_Error="Seleccionando elemento por id ="+ nombreElemento;
+			ResultSuccess();
+
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00041: No se pudo seleccionar el elemento id del dropdown" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, idElemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, idElemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, idElemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, idElemento);
+			System.out.println("Informacion: Elemento id= "+idElemento+" seleccionado correctamente ="+ nombreElemento);
+			return true;
+	}
+
+	//Este metodo es para elementos con id NAME
+	public boolean SelectDropDownTEXTByID(WebDriver driver, String idElemento, String SeleccionarElementoDropdown, String nombreElemento)  {
+
+		try{
+			Select selection = new Select(driver.findElement(By.id(idElemento)));
+			selection.selectByVisibleText(SeleccionarElementoDropdown);
+			Str_Error="Seleccionando elemento por id ="+ nombreElemento;
+			ResultSuccess();
+
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00042: No se pudo seleccionar el elemento por id del dropdown" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, idElemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, idElemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, idElemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, idElemento);
+			System.out.println("Informacion: Elemento seleccionado por id ="+idElemento+" correctamente= "+ nombreElemento);
+			return true;
+	}
+
+
+	//ENVIAR KEYS 
+	public boolean TypeKeysByXpath(WebDriver driver, String Elemento, Keys KeysTosend, String nombreElemento)  {
+
+		try{
+			driver.findElement(By.xpath(Elemento)).sendKeys(KeysTosend);
+			Str_Error="Elemento xpath encontrado correctamente ="+ nombreElemento;
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00043: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento xpath="+Elemento+" encontrado correctamente=" + nombreElemento);
+			return true;
+	}
+
+	public boolean TypeKeysByXpath(WebDriver driver, String Elemento, Keys KeysTosend,String texto, String nombreElemento )  {
+
+		try{
+			driver.findElement(By.xpath(Elemento)).sendKeys(KeysTosend+texto);
+			Str_Error="Elemento xpath encontrado correctamente ="+ nombreElemento;
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00044: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento xpath= "+Elemento+" encontrado correctamente= " + nombreElemento);
+			return true;
+	}
+	
+	public boolean TypeKeysByXpath(WebDriver driver, String Elemento, Keys KeysTosend, Keys KeysTosend2, String nombreElemento )  {
+
+		try{
+			driver.findElement(By.xpath(Elemento)).sendKeys(KeysTosend,KeysTosend2);
+			Str_Error="Elemento xpath encontrado correctamente ="+ nombreElemento;
+			ResultSuccess();
+			
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00045: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento xpath= "+Elemento+" encontrado correctamente =" + nombreElemento);
+			return true;
+	}
+	
+	public boolean TypeKeysByXpath(WebDriver driver, String Elemento, Keys KeysTosend, Keys KeysTosend2, Keys KeysTosend3, String nombreElemento )  {
+
+		try{
+			driver.findElement(By.xpath(Elemento)).sendKeys(KeysTosend,KeysTosend2,KeysTosend3);
+			Str_Error="Elemento xpath encontrado correctamente ="+ nombreElemento;
+			ResultSuccess();
+			
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00046: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento xpath= "+Elemento+" encontrado correctamente=" + nombreElemento);
+			return true;
+	}
+	
+	public boolean TypeKeysByXpath(WebDriver driver, String Elemento, Keys KeysTosend,Keys KeysTosend2, Keys KeysTosend3, Keys KeysTosend4, String nombreElemento)  {
+
+		try{
+			
+			driver.findElement(By.xpath(Elemento)).sendKeys(KeysTosend,KeysTosend2,KeysTosend3,KeysTosend4);
+			Str_Error="Elemento xpath encontrado correctamente ="+ nombreElemento;
+			ResultSuccess();			
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00047: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento xpath= "+Elemento+" encontrado correctamente=" + nombreElemento);
+			return true;
+	}
+	public boolean TypeKeysByXpath(WebDriver driver, String Elemento, Keys KeysTosend,Keys KeysTosend2, Keys KeysTosend3, Keys KeysTosend4, Keys KeysTosend5, String nombreElemento)  {
+
+		try{
+			driver.findElement(By.xpath(Elemento)).sendKeys(KeysTosend,KeysTosend2,KeysTosend3,KeysTosend4,KeysTosend5);
+			Str_Error="Elemento xpath encontrado correctamente ="+ nombreElemento;
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00048: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento xpath= "+Elemento+" encontrado correctamente:" + nombreElemento);
+			return true;
+	}
+
+	public boolean TypeKeysByID(WebDriver driver, String Elemento, Keys KeysTosend, String nombreElemento)  {
+
+		try{
+			driver.findElement(By.id(Elemento)).sendKeys(KeysTosend);
+			Str_Error="Elemento id encontrado correctamente ="+ nombreElemento;
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00049: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento por id= "+Elemento+" encontrado correctamente=" + nombreElemento);
+			return true;
+	}
+	
+	public boolean TypeKeysByID(WebDriver driver, String Elemento, Keys KeysTosend, Keys KeysTosend2, String nombreElemento)  {
+
+		try{
+			driver.findElement(By.id(Elemento)).sendKeys(KeysTosend,KeysTosend2);
+			Str_Error="Elemento por id encontrado correctamente ="+ nombreElemento;
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00050: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento por id= "+Elemento+" encontrado correctamente=" + nombreElemento);
+			return true;
+	}
+	
+	public boolean TypeKeysByID(WebDriver driver, String Elemento, Keys KeysTosend, Keys KeysTosend2, Keys KeysTosend3, String nombreElemento )  {
+
+		try{
+			driver.findElement(By.id(Elemento)).sendKeys(KeysTosend,KeysTosend2,KeysTosend3);
+			Str_Error="Elemento por id encontrado correctamente ="+ nombreElemento;
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00051: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento por id= "+Elemento+" encontrado correctamente=" + nombreElemento);
+			return true;
+	}
+	
+	public boolean TypeKeysByID(WebDriver driver, String Elemento, Keys KeysTosend,Keys KeysTosend2, Keys KeysTosend3, Keys KeysTosend4, String nombreElemento)  {
+
+		try{
+			driver.findElement(By.id(Elemento)).sendKeys(KeysTosend,KeysTosend2,KeysTosend3,KeysTosend4);
+			Str_Error="Elemento por id encontrado correctamente ="+ nombreElemento;
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00052: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento por id= "+Elemento+" encontrado correctamente= " + nombreElemento);
+			return true;
+	}
+	
+	public boolean TypeKeysByID(WebDriver driver, String Elemento, Keys KeysTosend,Keys KeysTosend2, Keys KeysTosend3, Keys KeysTosend4, Keys KeysTosend5, String nombreElemento)  {
+
+		try{
+			driver.findElement(By.id(Elemento)).sendKeys(KeysTosend,KeysTosend2,KeysTosend3,KeysTosend4,KeysTosend5);
+			Str_Error="Elemento por id encontrado correctamente ="+ nombreElemento;
+			ResultSuccess();
+			
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00053: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			// Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento por id= "+Elemento+" encontrado correctamente= " + nombreElemento);
+			return true;
+	}
+	public boolean TypeKeysByCSS(WebDriver driver, String Elemento, Keys KeysTosend, String nombreElemento )  {
+
+		try{
+			driver.findElement(By.cssSelector(Elemento)).sendKeys(KeysTosend);
+			Str_Error="Elemento por cssSelector encontrado correctamente =" + nombreElemento;
+			ResultSuccess();
+			
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00054: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento por cssSelector= "+Elemento+" encontrado correctamente= " + nombreElemento);
+			return true;
+	}
+	
+	public boolean TypeKeysByCSS(WebDriver driver, String Elemento, Keys KeysTosend, Keys KeysTosend2, String nombreElemento )  {
+
+		try{
+			driver.findElement(By.cssSelector(Elemento)).sendKeys(KeysTosend,KeysTosend2);
+			Str_Error="Elemento por cssSelector encontrado correctamente =" + nombreElemento;
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00055: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento por cssSelector= "+Elemento+" encontrado correctamente= " + nombreElemento);
+			return true;
+	}
+	
+	public boolean TypeKeysByCSS(WebDriver driver, String Elemento, Keys KeysTosend, Keys KeysTosend2, Keys KeysTosend3, String nombreElemento )  {
+
+		try{
+			driver.findElement(By.cssSelector(Elemento)).sendKeys(KeysTosend,KeysTosend2,KeysTosend3);
+			Str_Error="Elemento por cssSelector encontrado correctamente =" + nombreElemento;
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00056: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento por cssSelector= "+Elemento+" encontrado correctamente= " + nombreElemento);
+			return true;
+	}
+	
+	public boolean TypeKeysByCSS(WebDriver driver, String Elemento, Keys KeysTosend,Keys KeysTosend2, Keys KeysTosend3, Keys KeysTosend4, String nombreElemento )  {
+
+		try{
+			driver.findElement(By.cssSelector(Elemento)).sendKeys(KeysTosend,KeysTosend2,KeysTosend3,KeysTosend4);
+			Str_Error="Elemento por cssSelector encontrado correctamente =" + nombreElemento;
+			ResultSuccess();
+			
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00057: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento por cssSelector= "+Elemento+" encontrado correctamente" + nombreElemento);
+			return true;
+	}
+	public boolean TypeKeysByCSS(WebDriver driver, String Elemento, Keys KeysTosend,Keys KeysTosend2, Keys KeysTosend3, Keys KeysTosend4, Keys KeysTosend5, String nombreElemento)  {
+
+		try{
+			driver.findElement(By.cssSelector(Elemento)).sendKeys(KeysTosend,KeysTosend2,KeysTosend3,KeysTosend4,KeysTosend5);
+			Str_Error="Elemento por cssSelector encontrado correctamente =" + nombreElemento;
+			ResultSuccess();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00058: No se pudo enviar la(s) tecla(s) seleccionada(s)" + nombreElemento;// + Obj_Excepcion.getMessage();
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha hecho clic en el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error, Elemento);
+			Obj_Log_Ejecucion.Registrar_Log_HTML(Str_Error, Elemento);
+			System.out.println("Informacion: Elemento por cssSelector= "+Elemento+" encontrado correctamente" + nombreElemento);
+			return true;
+	}
+
+	// CAMBIO DE FRAME
+//------------------------------------------------------------------------------------------------------------------------------------------
+
+	public boolean Frame(WebDriver driver, String elemento)  {
+
+		try{
+			driver.switchTo().frame(elemento);
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00055: No se pudo identificar el Frame" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Frame encontrado correctamente");
+		return true;
+	}
+	public boolean DefaultFrame(WebDriver driver)  {
+
+		try{
+			driver.switchTo().defaultContent();
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00056: No se pudo retornar al DefaultFrame" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: DefaultFrame retornado correctamente");
+		return true;
+	}
+
+	
+	//METODO CAPTURAR VALOR
+	//GetText
+//-------------------------------------------------------------------------------------------------------------------------------------------
+
+		public boolean Valor_Campo_ClassName()
+		{
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.className(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por className= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00064: Error capturando el valor del elemento "+ Str_Elemento +" por ClassName";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por className= " + Str_Texto;
+				return true;
+		}
+
+		public boolean Valor_Campo_CssSelector()
+		{
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.cssSelector(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por cssSelector= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00065: Error Capturando Valor elemento "+ Str_Elemento +" por CssSelector";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por cssSelector= " + Str_Texto;
+				return true;
+		}
+
+		public boolean Valor_Campo_ID()
+		{
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.id(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por id= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00066: Error Capturando Valor elemento "+ Str_Elemento +" por id";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por id= " + Str_Texto;
+				return true;
+		}
+
+		public boolean Valor_Campo_LinkText()
+		{
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.linkText(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por linkText= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00067: Error Capturando Valor elemento "+ Str_Elemento +" por LinkText";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por LinkText= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_Name()
+		{
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.name(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por name= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00068: Error Capturando Valor elemento "+ Str_Elemento +" por Name";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por name= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_PartialLinkText()
+		{
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.partialLinkText(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por partialLinkText= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00069: Error Capturando Valor elemento "+ Str_Elemento +" por PartialLinkText";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por PartialLinkText= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_TagName()
+		{
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.tagName(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por tagName= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00070: Error Capturando Valor elemento "+ Str_Elemento +" por tagName";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por tagName= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_XPath_Generico()
+		{
+
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.xpath(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00071: Error Capturando Valor elemento "+ Str_Elemento +" por xpath";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_ClassName(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.className(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por className= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00064: Error capturando el valor del elemento "+ Str_Elemento +" por ClassName";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por className= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_CssSelector(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.cssSelector(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por cssSelector= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00065: Error Capturando Valor elemento "+ Str_Elemento +" por CssSelector";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por CssSelector= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_ID(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.id(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por id= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00066: Error Capturando Valor elemento "+ Str_Elemento +" por id";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por id= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_LinkText(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.linkText(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por linkText= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00067: Error Capturando Valor elemento "+ Str_Elemento +" por LinkText";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por LinkText= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_Name(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.name(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por Name= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00068: Error Capturando Valor elemento "+ Str_Elemento +" por Name";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por Name= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_PartialLinkText(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.partialLinkText(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por partialLinkText= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00069: Error Capturando Valorelemento "+ Str_Elemento +" por PartialLinkText";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por PartialLinkText= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_TagName(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.tagName(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00070: Error Capturando Valor elemento "+ Str_Elemento +" por TagName";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por tagName= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_XPath_Generico(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.xpath(Str_Elemento)).getAttribute("value");
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00071: Error Capturando Valor elemento "+ Str_Elemento +" por XPath";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto);
+				return true;
+		}
+
+		//**Captura dato de un elemento
+		public boolean Obtiene_Valor_Campo_XPath(String Str_Elemento)
+		{	
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.xpath(Str_Elemento)).getText();
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00071: Error Capturando Valor elemento "+ Str_Elemento +" por XPath";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto);
+				return true;
+		}
+
+	
+		public boolean Valor_Campo_XPath_Generico_Text(String Str_Elemento)
+		{	
+			this.Str_Elemento = Str_Elemento;
+			try
+			{	
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.xpath(Str_Elemento)).getText();
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00071: Error Capturando Valor elemento "+ Str_Elemento +" por XPath";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto);
+				return true;
+		}
+
+
+		public boolean Valor_Campo_XPath_Text(String Str_Elemento)
+		{	
+			this.Str_Elemento = Str_Elemento;
+			try
+			{	
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.xpath(Str_Elemento)).getText();
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00071: Error Capturando Valor elemento "+ Str_Elemento +" por XPath";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_ClassName_Generico_Text(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.className(Str_Elemento)).getText();
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00071: Error Capturando Valor elemento "+ Str_Elemento +" por XPath";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por className= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_CSSSelector_Generico_Text(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.cssSelector(Str_Elemento)).getText();
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por cssSelector= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00071: Error Capturando Valor elemento "+ Str_Elemento +" por cssSelector";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por cssSelector= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_ID_Generico_Text(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.id(Str_Elemento)).getText();
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por id= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00071: Error Capturando Valor elemento "+ Str_Elemento +" por id";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por id= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_LinkText_Generico_Text(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.linkText(Str_Elemento)).getText();
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por linkText= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00071: Error Capturando Valor elemento "+ Str_Elemento +" por linkText";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por linkText= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_Name_Generico_Text(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.name(Str_Elemento)).getText();
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por name= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00071: Error Capturando Valor elemento "+ Str_Elemento +" por name";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por name= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_PartialLinkText_Generico_Text(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.partialLinkText(Str_Elemento)).getText();
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por partialLinkText= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00071: Error Capturando Valor elemento "+ Str_Elemento +" por partialLinkText";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}			
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por partialLinkText= " + Str_Texto);
+				return true;
+		}
+
+		public boolean Valor_Campo_TagName_Text(String Str_Elemento)
+		{
+			this.Str_Elemento = Str_Elemento;
+			try
+			{
+				ResultSuccess();
+				Str_Texto = driver.findElement(By.tagName(Str_Elemento)).getText();
+				Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por tagName= " + Str_Texto;
+			}
+			catch(Exception Obj_Excepcion)
+			{
+				Str_Error="Error 00071: Error Capturando Valor elemento "+ Str_Elemento +" por tagName";
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println(Str_Error);
+				ResultFail();
+				return false;
+			}
+				Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+				Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+				System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por tagName= " + Str_Texto);
+				return true;
+		}
+	
+	public boolean Valor_Campo_XPath_Text_ANS(String Str_Elemento)
+	{	
+		this.Str_Elemento = Str_Elemento;
+		try
+		{	
+			ResultSuccess();
+			Str_Texto = driver.findElement(By.xpath(Str_Elemento)).getText();
+			Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto;
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			Str_Error="Error 00071: Error encontrando elemento "+ Str_Elemento +" por xpath"; 
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+			System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto);
+			return true;
+	}
+
+	public boolean Encontrar_XPath_ANS(String Str_Elemento)
+	{
+		//Mï¿½todo que recibe como pï¿½rametro Str_Elemento y lo busca por Xpath
+		this.Str_Elemento = Str_Elemento;
+		try
+		{
+			ResultSuccess();
+			Str_Texto = driver.findElement(By.xpath(Str_Elemento)).getText();
+			Str_Error = "Informacion: Capturando Valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto;			
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00021: Error encontrando elemento "+ Str_Elemento +" por XPath";
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			//Mensaje por consola indicando que se ha encotrado el elemento
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+			System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto);
+			return true;
+	}
+
+	public boolean GetTextByXpath(WebDriver driver, String elemento)  {
+
+		try{
+			ResultSuccess();
+			WebElement mensajeWE = driver.findElement(By.xpath(elemento));
+			System.out.println(mensajeWE);
+			Str_Texto = String.valueOf(mensajeWE.getText());
+			Str_Error = "Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto;
+
+		}catch(Exception Obj_Excepcion)
+		{
+			Str_Error="Error 00057: Elemento "+elemento+" capturado text por xpath= " + Str_Texto;
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}		
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+			System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto);
+			return true;
+	}
+	
+	public boolean GetTextByXpathFirstElement(WebDriver driver, String elemento)  {
+		
+		try{
+			 ResultSuccess();
+			 Select comboBox = new Select(driver.findElement(By.xpath(elemento)));
+			 Str_Texto = comboBox.getFirstSelectedOption().getText();
+			 Str_Error = "Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto;
+			 
+		}catch(Exception Obj_Excepcion)
+		{
+			Str_Error="Error 00057: Elemento "+elemento+" capturado text por xpath= " + Str_Texto ;
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+			Obj_Log_Ejecucion = new Cls_Log_Ejecucion();
+			Obj_Log_Ejecucion.Registrar_Log_TXT(Str_Error,Str_Elemento);
+			System.out.println("Informacion: Capturando valor elemento " + Str_Elemento +" encontrado por xpath= " + Str_Texto);
+			return true;
+	}
+	
+	// METODO CONTROL BROWSER
+//--------------------------------------------------------------------------------------------------------------------------------------------	
+	
+	public void WindowsMinimize(WebDriver driver)  {
+
+		try{	
+			driver.manage().window().setPosition(new Point(0, -1000));
+
+		}catch(Exception Obj_Excepcion)
+		{
+			Str_Error="Error 00058: No se pudo minimizar el browser" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+		}
+		System.out.println("Informacion: Browser minimizado correctamente");
+
+	}
+
+	public void RefreshBrowser(WebDriver driver)  {
+
+		try{	
+			driver.navigate().refresh();			
+		}catch(Exception Obj_Excepcion)
+		{
+			Str_Error="Error 00089: refrescar el browser" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+		}
+		System.out.println("Informacion: Browser actualizado correctamente");
+
+	}
+
+	//METODO ESPERAR
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+	public String WaitAndJoinToFrame(WebDriver driver, String iFrame){
+		if ((driver == null) || (iFrame == null) || iFrame.isEmpty()) {
+
+			return "Mal uso de la sentencia frameToBeAvailableAndSwitchToIt";
+		}
+		try {
+			(new WebDriverWait(driver, 300)).until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(iFrame));
+			return null;
+		} catch (TimeoutException e) {
+			return "Error 00069: Entrando al iFrame.";
+		}
+
+	}
+	
+	public String WaitForTextByXpath(WebDriver driver, String Elemento, String label){
+
+		if ((driver == null) || (Elemento == null) || Elemento.isEmpty()) {
+
+			return "Mal uso de la sentencia WaitForTextIsPresent";
+		}
+		try {
+			(new WebDriverWait(driver, 600)).until(ExpectedConditions.textToBePresentInElementLocated(By.xpath(Elemento),label));
+		} catch (TimeoutException e) {
+			return "Error 00070: al esperar por el elemento.";
+		}
+		return label;
+
+	}
+	
+	public void WaitForTextByXpath2(WebDriver driver, String Elemento, String Texto){
+
+		try{	
+			WebDriverWait wait = new WebDriverWait(driver, 300);
+			wait.until(ExpectedConditions.textToBePresentInElementLocated(By.xpath(Elemento), Texto));	
+		}catch(Exception Obj_Excepcion)
+		{
+			Str_Error="Error 00071: No se pudo encontrar el texto a identificar" + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+		}
+		System.out.println("Informacion: Texto encontrado correctamente");
+	}
+	
+	public boolean Esperar_ClassName()
+	{
+		//Espera que el elemento este disponible por ClassName
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.className(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00072: Error esperando elemento "+ Str_Elemento +" por ClassName  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elmento se ha encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por ClassName");
+		return true;
+	}
+
+	public boolean Esperar_CssSelector()
+	{
+		// Espera que el elemento este disponible por CssSelector
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00073: Error esperando elemento "+ Str_Elemento +" por CssSelector  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		// Mensaje por consola indicando que se ha encontrado el elemento
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por CssSelector");
+		return true;
+	}
+
+	public boolean Esperar_ID()
+	{
+		// Espera que el elemento se encuentre disponible por ID
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.id(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00074: Error esperando elemento "+ Str_Elemento +" por ID  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		// Mensaje por consola indicando que se ha encontrado el elemento
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por ID");
+		return true;
+	}
+
+	public boolean Esperar_LinkText()
+	{
+		// Espera que el elemento se encuentre disponible por LinkText
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.linkText(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00075: Error esperando elemento "+ Str_Elemento +" por LinkText  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		// Mensaje por consola indicando que el elemento se ha encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por LinkText");
+		return true;
+	}
+
+	public boolean Esperar_Name()
+	{
+		//Espera que el elemento se encuentre disponible por Name
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.name(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00076: Error esperando elemento "+ Str_Elemento +" por Name  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento se ha encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por Name");
+		return true;
+	}
+
+	public boolean Esperar_PartialLinkText()
+	{
+		//Espera que el elemento se encuentre disponible por PartialLinkText 
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.
+					partialLinkText(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00077: Error esperando elemento "+ Str_Elemento +" por PartialLinkText  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		// Mensaje por consola indicando que el elemento esta disponible.
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por PartialLinkText");
+		return true;
+	}
+
+	public boolean Esperar_TagName()
+	{
+		//Espera que el elemento se encuentre disponible por TagName
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.tagName(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00078: Error esperando elemento "+ Str_Elemento +" por Tagname  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento se encuentra disponible
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por TagName");
+		return true;
+	}
+
+	public boolean Esperar_XPath_Generico()
+	{
+		//Espera que el elemento se encuentre disponible por Xpath
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.xpath(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00079: Error esperando elemento "+ Str_Elemento +" por XPath  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento esta disponible
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por XPath");
+		return true;
+	}
+
+	public boolean Esperar_ClassName(String Str_Elemento)
+	{
+		//Espera que el elemento se encuentre disponible por ClassName y recibe como pï¿½rametro el elemento Str_Elemento
+		this.Str_Elemento = Str_Elemento;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.className(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00080: Error esperando elemento "+ Str_Elemento +" por ClassName  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento se ha encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por ClassName");
+		return true;
+	}
+
+	public boolean Esperar_CssSelector(String Str_Elemento)
+	{
+		// Espera que el elemento este disponible por CssSelector y recibe como pï¿½rametro el elemento Str_Elemento
+		this.Str_Elemento = Str_Elemento;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00081: Error esperando elemento "+ Str_Elemento +" por CssSelector  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento se ha encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por CssSelector");
+		return true;
+	}
+
+	public boolean Esperar_ID(String Str_Elemento)
+	{
+		//Espera que el elemento este disponible por ID y recibe como pï¿½rametro el elemento Str_Elemento
+		this.Str_Elemento = Str_Elemento;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.id(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00082: Error esperando elemento "+ Str_Elemento +" por ID  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		// Mensaje por consola indicando que el elemento fue encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por ID");
+		return true;
+	}
+
+	public boolean Esperar_LinkText(String Str_Elemento)
+	{
+		//Espera que el elemento este disponible por LinkText, y recibe como pï¿½rametro el elemento Str_Elemento 
+		this.Str_Elemento = Str_Elemento;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.linkText(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00083: Error esperando elemento "+ Str_Elemento +" por LinkText  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento fue encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por LinkText");
+		return true;
+	}
+
+	public boolean Esperar_Name(String Str_Elemento)
+	{
+		// Espera que el elemento este disponible por Name, y recibe como pï¿½rametro el elemento Str_Elemento
+		this.Str_Elemento = Str_Elemento;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.name(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00084: Error esperando elemento "+ Str_Elemento +" por Name  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento ha sido encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por Name");
+		return true;
+	}
+
+	public boolean Esperar_PartialLinkText(String Str_Elemento)
+	{
+		//Espera que el elemento este disponible por PartialLinText
+		this.Str_Elemento = Str_Elemento;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.
+					partialLinkText(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{			
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00085: Error esperando elemento "+ Str_Elemento +" por PartialLinkText  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento ha sido encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por PartialLinkText");
+		return true;
+	}
+
+
+
+	public boolean Esperar_TagName(String Str_Elemento)
+	{
+		//Espera que el elemento este disponible por TagName, y recibe como pï¿½rametro el elemento Str_Elemento
+		this.Str_Elemento = Str_Elemento;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.tagName(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00086: Error esperando elemento "+ Str_Elemento +" por TagName  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento ha sido encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por TagName");
+		return true;
+	}
+
+	public boolean Esperar_XPath_Generico(String Str_Elemento)
+	{
+		//Espera que el elemento este disponible por Xpath, y recibe como pï¿½rametro el elemento Str_Elemento
+		this.Str_Elemento = Str_Elemento;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.xpath(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00087: Error esperando elemento "+ Str_Elemento +" por XPath  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento ha sido encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por XPath");
+		return true;
+	}
+
+	public boolean Esperar_ClassName(String Str_Elemento, int Int_Tiempo_Espera)
+	{
+		//Espera que el elemento este disponible por ClassName, y recibe como pï¿½rametro el elemento Str_Elemento
+		this.Str_Elemento = Str_Elemento;
+		this.Int_Tiempo_Espera = Int_Tiempo_Espera;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.className(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00088: Error esperando elemento "+ Str_Elemento +" por ClassName  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento ha sido encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por ClassName");
+		return true;
+	}
+
+	public boolean Esperar_CssSelector(String Str_Elemento, int Int_Tiempo_Espera)
+	{
+		// Espera que el elemento este disponible por CssSelector, recibe como pï¿½rametro el eleemnto Str_Elemento
+		this.Str_Elemento = Str_Elemento;
+		this.Int_Tiempo_Espera = Int_Tiempo_Espera;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.cssSelector(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00089: Error esperando elemento "+ Str_Elemento +" por CssSelector  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento ha sido encontrado.
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por CssSelector");
+		return true;
+	}
+
+	public boolean Esperar_ID(String Str_Elemento, int Int_Tiempo_Espera)
+	{
+		// Espera que el elemento este disponible por ID, recibe parametro del elemento Str_Elemento
+		this.Str_Elemento = Str_Elemento;
+		this.Int_Tiempo_Espera = Int_Tiempo_Espera;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.id(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00070: Error esperando elemento "+ Str_Elemento +" por ID  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento se ha encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por ID");
+		return true;
+	}
+
+	public boolean Esperar_LinkText(String Str_Elemento, int Int_Tiempo_Espera)
+	{
+		//Espera que el elemento este disponible por LinkText, recibe como parametro el elemento y tienen tiempo de espera
+		this.Str_Elemento = Str_Elemento;
+		this.Int_Tiempo_Espera = Int_Tiempo_Espera;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.linkText(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00071: Error esperando elemento "+ Str_Elemento +" por LinkText  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por LinkText");
+		return true;
+	}
+
+	public boolean Esperar_Name(String Str_Elemento, int Int_Tiempo_Espera)
+	{
+		//Espera que el elemento este disponible por LinkText, recibe como parametro el elemento y tienen tiempo de espera
+		this.Str_Elemento = Str_Elemento;
+		this.Int_Tiempo_Espera = Int_Tiempo_Espera;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.name(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00072: Error esperando elemento "+ Str_Elemento +" por Name  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento se ha encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por Name");
+		return true;
+	}
+
+	public boolean Esperar_PartialLinkText(String Str_Elemento, int Int_Tiempo_Espera)
+	{
+		//Espera que el elemento este disponible por LinkText, recibe como parametro el elemento y tienen tiempo de espera
+		this.Str_Elemento = Str_Elemento;
+		this.Int_Tiempo_Espera = Int_Tiempo_Espera;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.
+					partialLinkText(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00073: Error esperando elemento "+ Str_Elemento +" por PartialLinkText  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento se ha encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por PartialLinkText");
+		return true;
+	}
+
+	public boolean Esperar_TagName(String Str_Elemento, int Int_Tiempo_Espera)
+	{
+		//Espera que el elemento este disponible por LinkText, recibe como parametro el elemento y tienen tiempo de espera
+		this.Str_Elemento = Str_Elemento;
+		this.Int_Tiempo_Espera = Int_Tiempo_Espera;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.tagName(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00074: Error esperando elemento "+ Str_Elemento +" por TagName  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha encontrado el elemento
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por TagName");
+		return true;
+	}
+
+	public boolean Esperar_XPath_Generico(String Str_Elemento, int Int_Tiempo_Espera)
+	{
+		//Espera que el elemento este disponible por Xpath, recibe como parametro el elemento y tienen tiempo de espera
+		this.Str_Elemento = Str_Elemento;
+		this.Int_Tiempo_Espera = Int_Tiempo_Espera;
+		try
+		{
+			WebElement Obj_WebElement = (new WebDriverWait(driver, Int_Tiempo_Espera)).until(ExpectedConditions.presenceOfElementLocated(By.xpath(Str_Elemento)));
+			ResultSuccess();
+		}
+		catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00075: Error esperando elemento "+ Str_Elemento +" por XPath  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que el elemento se ha encontrado
+		System.out.println("Informacion: Elemento "+ Str_Elemento + " esperando por XPath");
+		return true;
+	}
+	
+	// METODO LIMPIAR CAMPOS
+//--------------------------------------------------------------------------------------------------------------------------------------------
+	
+	public boolean ClearFieldsByXpath(String elemento) {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.xpath(elemento)).clear(); 
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00061: Error clickeando elemento "+ elemento +" por XPATH  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por XPATH");
+		return true;
+	}
+
+	public boolean ClearFieldsByClassname(String elemento) {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.className(elemento)).clear(); 
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00062: Error clickeando elemento "+ elemento +" por Classname  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por Classname");
+		return true;
+	}
+
+	public boolean ClearFieldsByCSS(String elemento) {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.cssSelector(elemento)).clear(); 
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00063: Error clickeando elemento "+ elemento +" por CSS  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por CSS");
+		return true;
+	}
+
+	public boolean ClearFieldsByID(String elemento) {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.id(elemento)).clear(); 
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00064: Error clickeando elemento "+ elemento +" por ID  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por ID");
+		return true;
+	}
+
+	public boolean ClearFieldsByLinktext(String elemento) {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.linkText(elemento)).clear(); 
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00065: Error clickeando elemento "+ elemento +" por LinkText  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por LinkText");
+		return true;
+	}
+
+	public boolean ClearFieldsByName(String elemento) {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.name(elemento)).clear(); 
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00066: Error clickeando elemento "+ elemento +" por NAME  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por NAME");
+		return true;
+	}
+
+	public boolean ClearFieldsByPartialLinktext(String elemento) {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.partialLinkText(elemento)).clear(); 
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00067: Error clickeando elemento "+ elemento +" por PartialLinkText  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por PartialLinkText");
+		return true;
+	}
+
+	public boolean ClearFieldsByTagName(String elemento) {
+		this.Str_Elemento = elemento;
+		try{
+			driver.findElement(By.tagName(elemento)).clear(); 
+		}catch(Exception Obj_Excepcion)
+		{
+			// Registra en LOG el error generado al encontrar el elemento definido en la variable Str_Elemento
+			Str_Error="Error 00068: Error clickeando elemento "+ elemento +" por TagName  , " + Obj_Excepcion.getMessage();
+			System.out.println(Str_Error);
+			ResultFail();
+			return false;
+		}
+		//Mensaje por consola indicando que se ha hecho clic en el elemento
+		System.out.println("Informacion: Elemento "+ elemento + " clickeado por TagName");
+		return true;
+	}
+	
+	//Acciones Sikuli
+	
+	public boolean find(String direccion,String nombreImagen){
+		boolean estado = false;
+		
+		for (int i = 0; i < 5; i++) {
+			sr = new DesktopScreenRegion();
+			
+			tr = new ImageTarget(new File(direccion + nombreImagen));
+			sr= sr.find(tr);
+//			mouse = new DesktopMouse();
+//			mouse.move(sr.getCenter());
+			System.out.println("imagen encontrada");
+			estado = true;
+			break;
+			
+		}		
+		return true;
+	}
+	
+	
+}
+
+
+
