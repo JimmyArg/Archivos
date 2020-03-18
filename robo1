@@ -1,0 +1,759 @@
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.xssf.usermodel.*;
+import org.apache.ss.util.*;
+import java.io.*;
+import com.eviware.soapui.support.GroovyUtils;
+import groovy.util.XmlParser;
+import groovy.util.XmlSlurper;
+import groovy.json.JsonSlurper;
+
+
+
+  // Clase de ExcelReader que contiene una funcion "readData", para leer datos del archivo Excel "--".
+
+  class ExcelReader{
+
+  	def readData(){
+
+  		// Ruta del excel
+
+  		def path = "C:\\Datos\\Datos_Vejez.xlsx";
+  		InputStream inputStream = new FileInputStream(path);
+  		Workbook workbook = WorkbookFactory.create(inputStream);
+  		Sheet sheet = workbook.getSheetAt(0);
+		
+  		// Carga los datos de tipo String del Excel
+
+  		Iterator rowIterator = sheet.rowIterator();
+  		rowIterator.next()
+  		Row row;
+
+  		def rowsData = []
+
+  		while(rowIterator.hasNext()){
+
+  			row = rowIterator.next()
+  			def rowIndex = row.getRowNum()
+  			def colIndex;
+  			def rowData = []
+
+  			for(Cell cell : row){
+  				colIndex = cell.getColumnIndex()
+  				rowData[colIndex] = cell.getRichStringCellValue().getString();
+  				
+  			}
+
+  			rowsData << rowData
+  		}
+
+  		rowsData
+  	}
+  }
+
+  		def groovyUtils = new com.eviware.soapui.support.GroovyUtils(context)
+  		def myTestCase = context.testCase
+        
+  		ExcelReader  excelReader =  new ExcelReader();
+  		
+  		List rows = excelReader.readData();
+  		def d = []
+    		Date date = new Date()
+     	def newDate = date.format("YYYY-MM-dd-HH-mm-ss.SSS")               	 
+     	def subdir = new File('C:\\Datos\\LOG')
+     	subdir.mkdir();
+  		Iterator i = rows.iterator();
+ 		// create a new file
+  		FileOutputStream out = new FileOutputStream("C:\\Datos\\LOG\\Vejez - "+newDate+".xlsx");
+  		// create a new workbook
+  		Workbook wb = new XSSFWorkbook(); 
+		// Pinta los datos en el archivo Excel
+		/*rownum++
+		Sheet s = wb.createSheet(name = "Ejecución_"+rownum);  */
+		Sheet s = wb.createSheet(name = "Ejecución"+newDate);
+
+		XSSFCellStyle my_style = wb.createCellStyle();
+		XSSFFont my_font = wb.createFont();
+		my_font.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
+		my_style.setFont(my_font);
+		int rownum = 0
+          int rownum1 = 1		
+		int rownum2 = 1
+		int rownum3 = 0
+		Row r = s.createRow(rownum1)                                          
+		Cell c0 = r.createCell(0);
+		c0.setCellValue("# Ejecución");
+		c0.setCellStyle(my_style);
+		
+		Cell c1 = r.createCell(1);
+		c1.setCellValue(" Request Preliquidacion: ");
+		c1.setCellStyle(my_style);
+		
+		//Row r1 = s.createRow(rownum1)
+		Cell c2 = r.createCell(2);
+		c2.setCellValue(" Response Preliquidacion: ");
+		c2.setCellStyle(my_style);
+
+		Cell x2 = r.createCell(3);
+		x2.setCellValue(" Response beneficioRecibido: ");
+		x2.setCellStyle(my_style);
+
+		//Row r9 = s.createRow(rownum1)
+		Cell c4 = r.createCell(4);
+		c4.setCellValue(" Resultado Preliquidacion: ");
+		c4.setCellStyle(my_style);
+
+		Cell c10 = r.createCell(6);
+		c10.setCellValue(" Request ValidaCRM: ");
+		c10.setCellStyle(my_style);
+
+		//Row r1 = s.createRow(rownum1)
+		Cell c61 = r.createCell(7);
+		c61.setCellValue(" Response ValidaCRM: ");
+		c61.setCellStyle(my_style);
+
+		//Row r9 = s.createRow(rownum1)
+		Cell c5 = r.createCell(8);
+		c5.setCellValue(" Resultado ValidaCRM: ");
+		c5.setCellStyle(my_style);
+
+		Cell v1 = r.createCell(10);
+		v1.setCellValue(" Request InstanciasBPM: ");
+		v1.setCellStyle(my_style);
+
+		//Row r1 = s.createRow(rownum1)
+		Cell v2 = r.createCell(11);
+		v2.setCellValue(" Response total InstanciasBPM: ");
+		v2.setCellStyle(my_style);
+
+		Cell v4 = r.createCell(12);
+		v4.setCellValue(" Response InstanciasBPM: ");
+		v4.setCellStyle(my_style);
+
+		//Row r9 = s.createRow(rownum1)
+		Cell v3 = r.createCell(13);
+		v3.setCellValue(" Resultado nombreActividad: ");
+		v3.setCellStyle(my_style);
+
+		Cell v7 = r.createCell(15);
+		v7.setCellValue(" Request MotorPrepension: ");
+		v7.setCellStyle(my_style);
+// CAMPOS DE INCONSISTENCIAID
+		//Row r1 = s.createRow(rownum1)
+		Cell y0 = r.createCell(16);
+		y0.setCellValue(" Response inconsistenciaId 0: ");
+		y0.setCellStyle(my_style);
+
+		Cell y1 = r.createCell(18);
+		y1.setCellValue(" Response inconsistenciaId 1: ");
+		y1.setCellStyle(my_style);
+		Cell y2 = r.createCell(20);
+		y2.setCellValue(" Response inconsistenciaId 2: ");
+		y2.setCellStyle(my_style);
+		Cell y3 = r.createCell(22);
+		y3.setCellValue(" Response inconsistenciaId 3: ");
+		y3.setCellStyle(my_style);
+		Cell y4 = r.createCell(24);
+		y4.setCellValue(" Response inconsistenciaId 4: ");
+		y4.setCellStyle(my_style);
+		Cell y5 = r.createCell(26);
+		y5.setCellValue(" Response inconsistenciaId 5: ");
+		y5.setCellStyle(my_style);
+		Cell y6 = r.createCell(28);
+		y6.setCellValue(" Response inconsistenciaId 6: ");
+		y6.setCellStyle(my_style);
+		Cell y7 = r.createCell(30);
+		y7.setCellValue(" Response inconsistenciaId 7: ");
+		y7.setCellStyle(my_style);
+		Cell y8 = r.createCell(32);
+		y8.setCellValue(" Response inconsistenciaId 8: ");
+		y8.setCellStyle(my_style);
+		Cell y9 = r.createCell(34);
+		y9.setCellValue(" Response inconsistenciaId 9: ");
+		y9.setCellStyle(my_style);
+		Cell y10 = r.createCell(36);
+		y10.setCellValue(" Response inconsistenciaId 10: ");
+		y10.setCellStyle(my_style);
+		Cell y11 = r.createCell(38);
+		y11.setCellValue(" Response inconsistenciaId 11: ");
+		y11.setCellStyle(my_style);
+		Cell y12 = r.createCell(40);
+		y12.setCellValue(" Response inconsistenciaId 12: ");
+		y12.setCellStyle(my_style);
+		Cell y13 = r.createCell(42);
+		y13.setCellValue(" Response inconsistenciaId 13: ");
+		y13.setCellStyle(my_style);
+
+// CAMPOS DE ESTADOINCONSISTENCIA:
+		Cell j0 = r.createCell(17);
+		j0.setCellValue(" Response estadoInconsistencia 0: ");
+		j0.setCellStyle(my_style);
+
+		Cell j1 = r.createCell(19);
+		j1.setCellValue(" Response estadoInconsistencia: 1: ");
+		j1.setCellStyle(my_style);
+		Cell j2 = r.createCell(21);
+		j2.setCellValue(" Response estadoInconsistencia: 2: ");
+		j2.setCellStyle(my_style);
+		Cell j3 = r.createCell(23);
+		j3.setCellValue(" Response estadoInconsistencia: 3: ");
+		j3.setCellStyle(my_style);
+		Cell j4 = r.createCell(25);
+		j4.setCellValue(" Response estadoInconsistencia: 4: ");
+		j4.setCellStyle(my_style);
+		Cell j5 = r.createCell(27);
+		j5.setCellValue(" Response estadoInconsistencia: 5: ");
+		j5.setCellStyle(my_style);
+		Cell j6 = r.createCell(29);
+		j6.setCellValue(" Response estadoInconsistencia: 6: ");
+		j6.setCellStyle(my_style);
+		Cell j7 = r.createCell(31);
+		j7.setCellValue(" Response estadoInconsistencia: 7: ");
+		j7.setCellStyle(my_style);
+		Cell j8 = r.createCell(33);
+		j8.setCellValue(" Response estadoInconsistencia: 8: ");
+		j8.setCellStyle(my_style);
+		Cell j9 = r.createCell(35);
+		j9.setCellValue(" Response estadoInconsistencia: 9: ");
+		j9.setCellStyle(my_style);
+		Cell j10 = r.createCell(37);
+		j10.setCellValue(" Response estadoInconsistencia: 10: ");
+		j10.setCellStyle(my_style);
+		Cell j11 = r.createCell(39);
+		j11.setCellValue(" Response estadoInconsistencia: 11: ");
+		j11.setCellStyle(my_style);
+		Cell j12 = r.createCell(41);
+		j12.setCellValue(" Response estadoInconsistencia: 12: ");
+		j12.setCellStyle(my_style);
+		Cell j13 = r.createCell(43);
+		j13.setCellValue(" Response estadoInconsistencia: 13: ");
+		j13.setCellStyle(my_style);
+
+
+		Cell v9 = r.createCell(44);
+		v9.setCellValue(" Response total MotorPrepension: ");
+		v9.setCellStyle(my_style);
+
+		//Row r9 = s.createRow(rownum1)
+		Cell v10 = r.createCell(45);
+		v10.setCellValue(" Resultado MotorPrepension: ");
+		v10.setCellStyle(my_style);
+
+		Cell v11 = r.createCell(47);
+		v11.setCellValue(" Request AfiliacionMagisterio: ");
+		v11.setCellStyle(my_style);
+
+		Cell v12 = r.createCell(48);
+		v12.setCellValue(" Response total AfiliacionMagisterio: ");
+		v12.setCellStyle(my_style);
+
+		//Row r9 = s.createRow(rownum1)
+		Cell v13 = r.createCell(49);
+		v13.setCellValue(" Resultado AfiliacionMagisterio: ");
+		v13.setCellStyle(my_style);
+
+		/*Cell c5 = r.createCell(4);
+		c5.setCellValue(" Tiempo respuesta m/s:");
+		c5.setCellStyle(my_style);*/
+		
+               while(i.hasNext()){
+               	 d = i.next();
+               	 myTestCase.setPropertyValue("numeroIdentificacion",d[0])
+               	            	 
+               	 // runTestStepByName se utiliza para ejecutar el caso de prueba "REST Request".
+
+               	 testRunner.runTestStepByName("Preliquidacion")
+               	 // def TimeResponse = testRunner.testCase.testSteps ["Preliquidacion"]. testRequest.response.timeTaken; 
+                     // log.info response;
+               	 def xmlString =
+				 'Cabecera:'+"\n"+
+               	 'Name '+'  Value '+"\n"+
+               	 'numeroIdentificacion: '+d[0]+' '+"\n"
+
+               	 testRunner.runTestStepByName("ValidaCRM")
+               	 // def TimeResponse = testRunner.testCase.testSteps ["ValidaCRM"]. testRequest.response.timeTaken; 
+                     // log.info response;
+               	 def xmlString1 =
+				 'Cabecera:'+"\n"+
+               	 'Name '+'  Value '+"\n"+
+               	 'idAfiliado: '+d[0]+' '+"\n"
+
+               	 testRunner.runTestStepByName("InstanciasBPM")
+                     // log.info response;
+               	 def xmlString2 =
+				 'Cabecera:'+"\n"+
+               	 'Name '+'  Value '+"\n"+
+               	 'numeroIdentificacion_BPM: '+d[0]+' '+"\n"
+
+               	 testRunner.runTestStepByName("MotorPrepension")
+                     // log.info response;
+               	 def xmlString3 =
+				 'Cabecera:'+"\n"+
+               	 'Name '+'  Value '+"\n"+
+               	 'numeroIdentificacion_Prepension: '+d[0]+' '+"\n"
+
+               	 testRunner.runTestStepByName("AfiliacionMagisterio")
+                     // log.info response;
+               	 def xmlString4 =
+				 'Cabecera:'+"\n"+
+               	 'Name '+'  Value '+"\n"+
+               	 'numeroIdentificacion_Magisterio: '+d[0]+' '+"\n"
+				
+				def res = context.expand('${Preliquidacion#Response}')
+               	def res1 = context.expand('${ValidaCRM#Response}')
+
+				rownum1++
+				rownum++	
+				Row r11 = s.createRow(rownum1)
+      			Cell c22 = r11.createCell(0);
+      			c22.setCellValue(rownum);
+               	// Try-catch de Preliquidacion
+				try{
+                     //Muestra el Response de la ejecución. Preliquidacion 
+               	
+                     def parsedJson = new groovy.json.JsonSlurper().parseText(res)
+                     def pr = parsedJson.body.content.valorPensionMinima;
+                     def pr1 = parsedJson.body.content.capitalPensionMinima;
+                     def pr2 = parsedJson.body.content.valorPension;
+                     def pr3 = parsedJson.body.content.capitalPension;
+				 def pr4 = parsedJson.body.content.excedentesIblDiez;
+				 def pr5 = parsedJson.body.content.mesadaNuevaModalidad;
+				 def pr6 = parsedJson.body.content.mesadaLiquidacion;
+				 def pr7 = parsedJson.body.content.beneficioRecibido;
+
+
+
+				 //Mapeo de datos Preliquidacion
+				 def valor = "valorPensionMinima: " + pr + "\n";
+                     def valor1 = "capitalPensionMinima: " + pr1 + "\n";
+                     def valor2 = "valorPension: " + pr2 + "\n";
+                     def valor3 = "capitalPension: " + pr3 + "\n";
+                     def valor4 = "excedentesIblDiez: " + pr4 + "\n";
+                     def valor5 = "mesadaNuevaModalidad: " + pr5 + "\n";
+                     def valor6 = "mesadaLiquidacion: " + pr6 + "\n";
+                     def valor7 = "beneficioRecibido: " + pr7;
+
+				 // Valida si el caso es exitoso o fallido Preliquidacion.               	
+               	 if(res == '[]' || res == 'Bad Request' || res == 'Not Found' || res == 'Request failed.'
+               	 || res == '' || res == 'No existe la cabecera headerRQ'){
+
+               	 	result = 'Fallido'
+               	 }else{
+
+               	 	result = 'Exitoso'
+               	 }
+
+				
+      			//Row r11 = s.createRow(rownum1)
+      			Cell c23 = r11.createCell(1);
+      			c23.setCellValue(xmlString);
+                 			
+      			//rownum1++
+      			//Row r2 = s.createRow(rownum1)
+      			Cell c3 = r11.createCell(2);
+      			c3.setCellValue(valor+valor1+valor2+valor3+valor4+valor5+valor6+valor7);
+      			
+      			//s.autoSizeColumn(1);
+				Cell x3 = r11.createCell(3);
+      			x3.setCellValue(valor7);
+      							
+      			//Row r5 = s.createRow(rownum1)
+      			Cell c6 = r11.createCell(4);
+      			c6.setCellValue(result);
+
+      			
+                     log.info "Request: "+xmlString+ "\n";
+               	 log.info "Response: "+res+ "\n";
+               	 log.info "Resultado:"+result+"\n";
+               	 }catch (Exception expObj){
+
+               	rownum1++
+				rownum++
+				result6 = "Fallido"	
+				
+      			//Row r11 = s.createRow(rownum1)
+      			Cell c23 = r11.createCell(1);
+      			c23.setCellValue(xmlString);
+                 			
+      			//rownum1++
+      			//Row r2 = s.createRow(rownum1)
+      			Cell c3 = r11.createCell(2);
+      			c3.setCellValue(res);
+      			
+      			//s.autoSizeColumn(1);
+								
+      			//Row r5 = s.createRow(rownum1)
+      			Cell c6 = r11.createCell(3);
+      			c6.setCellValue(result6);
+
+      			
+                     log.info "Request: "+xmlString+ "\n";
+               	 log.info "Response: "+res+ "\n";
+               	 log.info "Resultado:"+result6+"\n";
+               	 	
+               	 }
+               	 
+               	 // Try-catch de ValidaCRM	
+               	 try{
+				 //Muestra el Response de la ejecución. ValidaCRM 
+				 
+                     def parsedJson1 = new groovy.json.JsonSlurper().parseText(res1)
+                     def pr8 = parsedJson1.celular;
+                     def pr9 = parsedJson1.correo;
+                     
+				 //Mapeo de datos ValidaCRM
+                     def valor8 = "celular: " + pr8 + "\n";
+                     def valor9 = "correo: " + pr9 + "\n";                     
+               	 
+				 // Valida si el caso es exitoso o fallido ValidaCRM.
+               	  if(pr8 == "" || pr9 == "" || res1 == '[]' || res1 == 'Bad Request' || res1 == 'Not Found' || res1 == 'Request failed.'
+               	 || res1 == '' || res1 == 'No existe la cabecera headerRQ'){
+
+               	 	result1 = 'Fallido'
+               	 }else{
+
+               	 	result1 = 'Exitoso'
+               	 }
+ 
+				// Pinta los datos en el archivo Excel ValidaCRM
+      			//Row r11 = s.createRow(rownum1)
+      			Cell c24 = r11.createCell(6);
+      			c24.setCellValue(xmlString1);
+                 			
+      			//rownum1++
+      			//Row r2 = s.createRow(rownum1)
+      			Cell c30 = r11.createCell(7);
+      			c30.setCellValue(valor8+valor9);
+      			
+      			//s.autoSizeColumn(1);
+								
+      			//Row r5 = s.createRow(rownum1)
+      			Cell c60 = r11.createCell(8);
+      			c60.setCellValue(result1);
+
+               	 log.info "Request: "+xmlString1+ "\n";
+               	 log.info "Response: "+res1+ "\n";
+               	 log.info "Resultado:"+result1+"\n";
+               	 
+				}catch (Exception expObj){
+
+
+				// Pinta los datos en el archivo Excel ValidaCRM
+      			//Row r11 = s.createRow(rownum1)
+      			result5 = "Fallido"
+      			Cell c24 = r11.createCell(5);
+      			c24.setCellValue(xmlString1);
+                 			
+      			//rownum1++
+      			//Row r2 = s.createRow(rownum1)
+      			Cell c30 = r11.createCell(6);
+      			c30.setCellValue(res1);
+      			
+      			//s.autoSizeColumn(1);
+								
+      			//Row r5 = s.createRow(rownum1)
+      			Cell c60 = r11.createCell(7);
+      			c60.setCellValue(result5);
+	
+      			/*Cell c7 = r11.createCell(4);
+      			c7.setCellValue(TimeResponse);*/
+               	 log.info "Request: "+xmlString1+ "\n";
+               	 log.info "Response: "+res1+ "\n";
+               	 log.info "Resultado:"+result5+"\n";
+
+					
+				}
+               	 
+                     // Pinta los datos en el archivo Excel Preliquidacion
+                     /*rownum++
+                     Sheet s = wb.createSheet(name = "Ejecución_"+rownum);  
+
+                     XSSFCellStyle my_style = wb.createCellStyle();
+                     XSSFFont my_font = wb.createFont();
+                     my_font.setBoldweight(XSSFFont.BOLDWEIGHT_BOLD);
+                     my_style.setFont(my_font);*/         
+
+				def res6 = groovyUtils.getXmlHolder("InstanciasBPM#Response")
+				def xmlData = res6.getXmlObject()
+				String str = xmlData.toString()
+				
+			// Try-catch de InstanciasBPM
+               try{
+        			def res6 = groovyUtils.getXmlHolder("InstanciasBPM#Response")
+				def xmlData = res6.getXmlObject()
+				String str = xmlData.toString()
+               	
+               	def b = str.split("<nombreActividad>")[1].split("</nombreActividad>")
+               	def c = str.split("<numeroSolicitud>")[1].split("</numeroSolicitud>")
+               	
+               	def value1 = "nombreActividad: " + b[0] + "\n";
+				def value2 = "numeroSolicitud: " + c[0] + "\n";
+			
+				
+               	result2 = "Exitoso";
+
+				// Pinta los datos en el archivo Excel ValidaCRM
+                 			
+      			//rownum11++
+      			//Row r222 = s.createRow(rownum11)
+      			Cell c70 = r11.createCell(10);
+      			c70.setCellValue(xmlString2);
+
+      			Cell c71 = r11.createCell(11);
+      			c71.setCellValue(value1+value2);
+
+      			Cell c73 = r11.createCell(12);
+      			c73.setCellValue(str);
+
+      			Cell c72 = r11.createCell(13);
+      			c72.setCellValue(value1);
+
+
+      			 log.info "Request: "+xmlString2+ "\n";
+               	 log.info "Response: " +"nombreActividad: "+ value1 +"numeroSolicitud: "+ value2 +  "\n";
+               	 log.info "Resultado:"+result2+"\n";
+      			
+               }catch(Exception expObj){
+
+               	result3 = "No tiene instancia creada"
+               	Cell c70 = r11.createCell(10);
+      			c70.setCellValue(xmlString2);
+
+				Cell c73 = r11.createCell(11);
+      			c73.setCellValue(str);
+
+      			Cell c72 = r11.createCell(13);
+      			c72.setCellValue(result3);
+ 
+      			log.info "Request: "+xmlString2+ "\n";
+      			log.info "result3: "+result3+ "\n";
+               	log.info "Resultado:"+expObj+"Error 01: Se presentó fallo en el servicio "+"\n";
+               	
+               }
+
+			def res10 = context.expand('${MotorPrepension#Response}')
+			
+               try{
+
+               	def parsedJson = new groovy.json.JsonSlurper().parseText(res10)
+                    def pr = parsedJson.body.content.inconsistenciaId;
+                    def pr1 = parsedJson.body.content.estadoInconsistencia;
+
+                    
+               	def valor0  = " " +pr[0];
+				def valor1 =  " " + pr1[0];
+				def valor2  = " " +pr[1];
+				def valor3 = " " + pr1[1];
+				def valor4  = " " +pr[2];
+				def valor5 = " " +pr1[2];
+				def valor6  = " " +pr[3];
+				def valor7 = " " +pr1[3];
+				def valor8  = " " +pr[4];
+				def valor9 = " " +pr1[4];
+				def valor10  = " " +pr[5];
+				def valor11 = " " +pr1[5];
+				def valor12  = " " +pr[6];
+				def valor13 = " " +pr1[6];
+				def valor14  = " " +pr[7];
+				def valor15 = " " +pr1[7];
+				def valor16  = " " +pr[8];
+				def valor17 = " " +pr1[8];
+				def valor18  = " " +pr[9];
+				def valor19 = " " +pr1[9];
+				def valor20  = " " +pr[10];
+				def valor21 = " " +pr1[10];
+				def valor22  = " " +pr[11];
+				def valor23 = " " +pr1[11];
+				def valor24  = " " +pr[12];
+				def valor25 = " " +pr1[12];
+				def valor26  = " " +pr[13];
+				def valor27 = " " +pr1[13];
+				
+				//log.info valor
+				log.info valor1
+				/*def count = 16;
+				def count1 = 17;
+				def aux = 0;
+				def aux1 = 1; 
+				//Cell y0 = r11.createCell(16);
+				def com = "";
+				def com1 = "";
+				while(aux < 14){
+
+				Cell k0 = r11.createCell(count);
+				Cell k1 = r11.createCell(count1);
+				com += pr[aux];
+				com1 += pr1[aux1]; // + "\n" + "estadoInconsistencia: " + pr1[aux] + "\n" + "\n";
+               	
+               	aux++;
+               	aux1++;
+               	count++;
+               	count1++;
+               	
+				}*/
+				Cell k0 = r11.createCell(16);
+				k0.setCellValue(valor0);
+				Cell t0 = r11.createCell(17);
+				t0.setCellValue(valor1);
+				Cell k1 = r11.createCell(18);
+				k1.setCellValue(valor2);
+				Cell t1 = r11.createCell(19);
+				t1.setCellValue(valor3);
+				Cell k2 = r11.createCell(20);
+				k2.setCellValue(valor4);
+				Cell t2 = r11.createCell(21);
+				t2.setCellValue(valor5);
+				Cell k3 = r11.createCell(22);
+				k3.setCellValue(valor6);
+				Cell t3 = r11.createCell(23);
+				t3.setCellValue(valor7);
+				Cell k4 = r11.createCell(24);
+				k4.setCellValue(valor8);
+				Cell t4 = r11.createCell(25);
+				t4.setCellValue(valor9);
+				Cell k5 = r11.createCell(26);
+				k5.setCellValue(valor10);
+				Cell t5 = r11.createCell(27);
+				t5.setCellValue(valor11);
+				Cell k6 = r11.createCell(28);
+				k6.setCellValue(valor12);
+				Cell t6 = r11.createCell(29);
+				t6.setCellValue(valor13);
+				Cell k7 = r11.createCell(30);
+				k7.setCellValue(valor14);
+				Cell t7 = r11.createCell(31);
+				t7.setCellValue(valor15);
+				Cell k8 = r11.createCell(32);
+				k8.setCellValue(valor16);
+				Cell t8 = r11.createCell(33);
+				t8.setCellValue(valor17);
+				Cell k9 = r11.createCell(34);
+				k9.setCellValue(valor18);
+				Cell t9 = r11.createCell(35);
+				t9.setCellValue(valor19);
+				Cell k10 = r11.createCell(36);
+				k10.setCellValue(valor20);
+				Cell t10 = r11.createCell(37);
+				t10.setCellValue(valor21);
+				Cell k11 = r11.createCell(38);
+				k11.setCellValue(valor22);
+				Cell t11 = r11.createCell(39);
+				t11.setCellValue(valor23);
+				Cell k12 = r11.createCell(40);
+				k12.setCellValue(valor24);
+				Cell t12 = r11.createCell(41);
+				t12.setCellValue(valor25);
+				Cell k13 = r11.createCell(42);
+				k13.setCellValue(valor26);
+				Cell t13 = r11.createCell(43);
+				t13.setCellValue(valor27);
+				
+	
+                    // Valida si el caso es exitoso o fallido MotorPrepension.
+                    
+               	  if(pr == "" || pr1 == "" || res10 == '[]' || res10 == 'Bad Request' || res10 == 'Not Found' || res10 == 'Request failed.'
+               	 || res10 == '' || res10 == 'No existe la cabecera headerRQ'){
+
+               	 	result20 = 'Fallido'
+               	 }else{
+
+               	 	result20 = 'Exitoso'
+               	 }
+               	
+               	 // Pinta los datos en el archivo Excel MotorPrepension
+      			//Row r222 = s.createRow(rownum11)
+      			Cell c70 = r11.createCell(15);
+      			c70.setCellValue(xmlString3);
+
+
+
+      			Cell c73 = r11.createCell(44);
+      			c73.setCellValue(res10);
+
+      			Cell c72 = r11.createCell(45);
+      			c72.setCellValue(result20);
+
+               	 log.info "Request: "+xmlString3+ "\n";
+               	 log.info "Response: "+res10+ "\n";
+               	 log.info "Resultado:"+result20+"\n";
+                    
+               	
+               }catch(Exception expObj){
+
+               	// Pinta los datos en el archivo Excel MotorPrepension
+      			//Row r222 = s.createRow(rownum11)
+      			result15 = "No se muestran inconsistencias"
+      			Cell c70 = r11.createCell(15);
+      			c70.setCellValue(xmlString3);
+
+      			Cell c73 = r11.createCell(44);
+      			c73.setCellValue(res10);
+
+      			Cell c72 = r11.createCell(45);
+      			c72.setCellValue(result15);
+
+               	log.info "Request: "+xmlString3+ "\n";
+               	log.info "Response: "+res10+ "\n";
+               	log.info "Resultado:"+result15+"\n";	
+               }
+
+			
+			
+               try{
+               	def res11 = context.expand('${AfiliacionMagisterio#Response}')
+               	def parsedJson = new groovy.json.JsonSlurper().parseText(res11)
+                    def pr = parsedJson.body.content;
+
+                    def valor = "content: " + pr + "\n";
+		
+                    
+                    // Valida si el caso es exitoso o fallido MotorPrepension.
+                    
+               	  if(res11 == '[]' || res11 == 'Bad Request' || res11 == 'Not Found' || res11 == 'Request failed.'
+               	 || res11 == '' || res11 == 'No existe la cabecera headerRQ'){
+
+               	 	result00 = 'Fallido'
+               	 	
+               	 }else{
+
+               	 	result00 = 'Exitoso'
+               	 }
+
+               	 // Pinta los datos en el archivo Excel MotorPrepension
+      			//Row r222 = s.createRow(rownum11)
+      			Cell c76 = r11.createCell(47);
+      			c76.setCellValue(xmlString4);
+
+      			Cell c77 = r11.createCell(48);
+      			c77.setCellValue(valor);
+
+      			Cell c78 = r11.createCell(49);
+      			c78.setCellValue(result00);
+
+               	 log.info "Request: "+xmlString3+ "\n";
+               	 log.info "Response: "+valor+ "\n";
+               	 log.info "Resultado:"+result00+"\n";
+                    
+               	
+               }catch(Exception expObj){
+
+               	// Pinta los datos en el archivo Excel MotorPrepension
+      			//Row r222 = s.createRow(rownum11)
+      			result16 = "Fallido"
+      			Cell c76 = r11.createCell(47);
+      			c76.setCellValue(xmlString4);
+
+      			Cell c77 = r11.createCell(48);
+      			c77.setCellValue(res11);
+
+      			Cell c78 = r11.createCell(49);
+      			c78.setCellValue(result16);
+
+               	log.info "Request: "+xmlString4+ "\n";
+               	log.info "Response: "+res11+ "\n";
+               	log.info "Resultado:"+result16+"\n";	
+               }
+              }
+ 
+               wb.write(out);
+               out.close();
